@@ -13,8 +13,7 @@ const StaffList = () => {
 
   // Handle the view action
   const handleView = (staffId) => {
-    const selectedStaff = staff.find((member) => member.staffId === staffId);
-    alert(`Viewing staff: ${selectedStaff.name}`);
+    navigate(`/staffDetails/${staffId}`); // Redirect to staff detail page
   };
 
   // Handle the edit action

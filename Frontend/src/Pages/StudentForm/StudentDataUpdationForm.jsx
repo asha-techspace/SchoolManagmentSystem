@@ -1,9 +1,12 @@
-// src/components/StudentForm.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 
-const StudentRegistrationForm = () => {
-  // Form data and error states
+const StudentDataUpdationForm = () => {
+  const { id } = useParams(); // Get the student ID from the URL
+
+  // Initial form state with the student's data
   const [formData, setFormData] = useState({
+    id: "",
     fullName: "",
     dob: "",
     gender: "",
@@ -20,6 +23,27 @@ const StudentRegistrationForm = () => {
 
   const [errors, setErrors] = useState({});
 
+  // Simulate fetching student data (replace with API call in real app)
+  useEffect(() => {
+    const mockStudentData = {
+      id: id, // Use the ID from the URL
+      fullName: "John Doe",
+      dob: "2008-05-15",
+      gender: "Male",
+      age: 15,
+      class: "10",
+      division: "A",
+      address: {
+        street: "123 Main St",
+        city: "Cityville",
+        state: "Stateland",
+        postalCode: "12345",
+      },
+    };
+
+    setFormData(mockStudentData); // Load the data into the form state
+  }, [id]);
+
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -32,12 +56,11 @@ const StudentRegistrationForm = () => {
       setFormData({ ...formData, [name]: value });
     }
   };
-  
 
   // Form validation
   const validate = () => {
     let validationErrors = {};
-    
+
     if (!formData.fullName.trim()) {
       validationErrors.fullName = "Full Name is required";
     }
@@ -45,8 +68,9 @@ const StudentRegistrationForm = () => {
     if (!formData.dob.trim()) {
       validationErrors.dob = "DOB is required";
     }
+
     if (!formData.gender.trim()) {
-      validationErrors.gender = "gender is required";
+      validationErrors.gender = "Gender is required";
     }
 
     if (!formData.age) {
@@ -58,9 +82,11 @@ const StudentRegistrationForm = () => {
     if (!formData.class.trim()) {
       validationErrors.class = "Class is required";
     }
-    if (!formData.class.trim()) {
-      validationErrors.class = "Division is required";
+
+    if (!formData.division.trim()) {
+      validationErrors.division = "Division is required";
     }
+
     if (!formData.address.street.trim()) {
       validationErrors.street = "Street address is required";
     }
@@ -76,6 +102,7 @@ const StudentRegistrationForm = () => {
     if (!formData.address.postalCode.trim()) {
       validationErrors.postalCode = "Postal Code is required";
     }
+
     return validationErrors;
   };
 
@@ -87,20 +114,29 @@ const StudentRegistrationForm = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Student data: ", formData);
-      alert("Form Submitted Successfully!");
-      setFormData({ fullName: "",dob:"" , gender: "", age: "", class: "", division: "", address: { street: "", city: "", state: "", postalCode: "" }, }); // Reset form after successful submission
+      console.log("Updated Student Data: ", formData);
+      alert("Student data updated successfully!");
+      // Reset or redirect logic here
     }
   };
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center flex justify-center items-center"
-    >
+    <div className="min-h-screen bg-cover bg-center flex justify-center items-center">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Student Registration Form</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">Update Student Data</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
-        
+          {/* Student ID (non-editable) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Student ID</label>
+            <input
+              type="text"
+              name="id"
+              value={formData.id}
+              readOnly
+              className="mt-1 block w-full p-2 border border-gray-300 bg-gray-100 rounded-md shadow-sm cursor-not-allowed"
+            />
+          </div>
+
           {/* Full Name */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Full Name</label>
@@ -109,26 +145,28 @@ const StudentRegistrationForm = () => {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.fullName ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${
+                errors.fullName ? "border-red-500" : "border-gray-300"
+              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.fullName && (
-              <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
-            )}
+            {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
           </div>
+
           {/* DOB */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Date Of Birth</label>
             <input
-              type="number"
+              type="date"
               name="dob"
               value={formData.dob}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.dob ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${
+                errors.dob ? "border-red-500" : "border-gray-300"
+              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
           </div>
+
           {/* Gender (Radio Buttons) */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Gender</label>
@@ -169,6 +207,7 @@ const StudentRegistrationForm = () => {
             </div>
             {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
           </div>
+
           {/* Age */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Age</label>
@@ -177,8 +216,9 @@ const StudentRegistrationForm = () => {
               name="age"
               value={formData.age}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.age ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${
+                errors.age ? "border-red-500" : "border-gray-300"
+              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
           </div>
@@ -191,11 +231,13 @@ const StudentRegistrationForm = () => {
               name="class"
               value={formData.class}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.class ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${
+                errors.class ? "border-red-500" : "border-gray-300"
+              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.class && <p className="text-red-500 text-sm mt-1">{errors.class}</p>}
           </div>
+
           {/* Division */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Division</label>
@@ -204,28 +246,11 @@ const StudentRegistrationForm = () => {
               name="division"
               value={formData.division}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.division ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${
+                errors.division ? "border-red-500" : "border-gray-300"
+              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.division && <p className="text-red-500 text-sm mt-1">{errors.division}</p>}
-          </div>
-           {/* Gender (Dropdown) */}
-           <div>
-            <label className="block text-sm font-medium text-gray-700">Gender</label>
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.gender ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
-            </select>
-            {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
           </div>
 
           {/* Address Section */}
@@ -239,11 +264,10 @@ const StudentRegistrationForm = () => {
               className={`mt-1 block w-full p-2 border ${
                 errors.street ? "border-red-500" : "border-gray-300"
               } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-            />
-            {errors.street && <p className="text-red-500 text-sm mt-1">{errors.street}</p>}
-          </div>
-
-          <div>
+              />
+              {errors.street && <p className="text-red-500 text-sm mt-1">{errors.street}</p>}
+            </div>
+            <div>
             <label className="block text-sm font-medium text-gray-700">City</label>
             <input
               type="text"
@@ -284,13 +308,13 @@ const StudentRegistrationForm = () => {
             />
             {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode}</p>}
           </div>
-          {/* Submit Button */}
-          <div className="text-center">
+           {/* Submit Button */}
+           <div className="text-center">
             <button
               type="submit"
               className="bg-[#0a4275] text-white px-6 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
             >
-              Register Student
+              Update Student
             </button>
           </div>
         </form>
@@ -299,4 +323,4 @@ const StudentRegistrationForm = () => {
   );
 };
 
-export default StudentRegistrationForm;
+export default StudentDataUpdationForm;

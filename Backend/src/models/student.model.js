@@ -1,24 +1,42 @@
 import mongoose from 'mongoose';
 
+const feeTransactionSchema = new mongoose.Schema({
+  date: {type:Date, required:true, default:Date.now},
+  amountpaid: {type:Number, required:true},
+})
+
+const libraryHistorySchema = new mongoose.Schema({
+      id: {type:Number, required:true},
+      title: {type:String, required:true},
+      author: {type:String, required:true},
+      issueDate: {type:Date, required:true,default:Date.now},
+      dueDate: {type:Date, required:true},
+      returnedDate: {type:Date},
+      status: {type:String, required:true, enum:['issued','returned'], default:'issued'}
+})
+
 const studentSchema = new mongoose.Schema({
-  name: String,
-  age: Number,
-  class: String,
+  studentId: {type:String, unique: true},
+  name : {type:String, required: true},
+  dob : {type:Date, required:true},
+  age : {type:Number, required:true},
+  gender : {type:String, enum: ['male','female','other'], required: true},
+  class: {type: Number, required:true},
+  division:{type: String, required:true},
+  address: {
+    street : {type: String},
+    city : {type: String},
+    state : {type: String},
+    postalCode : {type: String},
+  },
   feesHistory: [
     {
-      amount: Number,
-      date: Date,
-      remarks: String,
+      totalFees: {type:Number},
+      transactions: [feeTransactionSchema],
+      dueDate: {type:Date},
     },
   ],
-  libraryHistory: [
-    {
-      bookName: String,
-      borrowDate: Date,
-      returnDate: Date,
-      status: String, // Borrowed/Returned
-    },
-  ],
+  libraryHistory: [libraryHistorySchema],
 });
 
 export default mongoose.model('Student', studentSchema);

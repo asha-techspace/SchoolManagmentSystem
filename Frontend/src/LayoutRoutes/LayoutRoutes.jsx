@@ -7,11 +7,12 @@ import StudentRegistrationForm from '../Pages/StudentForm/StudentRegistrationFor
 import FeesRemarksForm from '../Pages/FeesRemarksForm/FeesRemarksCreateForm'
 import LibraryHistoryForm from '../Pages/LibraryHistoryForm/LibraryHistoryCreateForm'
 import StudentList from '../Pages/StudentList/StudentList'
-import StudentUpdateForm from '../Pages/StudentForm/StudentUpdateForm'
 import StudentDetails from '../Pages/StudentDetails/StudentDetails'
 import StaffRegistrationForm from '../Pages/StaffForm/StaffRegistrationForm'
 import StaffList from '../Pages/StaffList/StaffList'
 import StaffDataUpdationForm from '../Pages/StaffForm/StaffDataUpdationForm'
+import StaffDetails from '../Pages/StaffDetails/StaffDetails'
+import StudentDataUpdationForm from '../Pages/StudentForm/StudentDataUpdationForm'
 
 const LayoutRoutes = () => {
   return (
@@ -25,11 +26,12 @@ const LayoutRoutes = () => {
             <Route path='/feesRemarksForm' element={<FeesRemarksForm />}/>
             <Route path='/libraryHistoryForm' element={<LibraryHistoryForm />}/>
             <Route path='/studentsList' element= {<StudentList />}/>
-            <Route path='/studentUpdateForm/:id' element= {<StudentUpdateForm />} />
+            <Route path='/studentUpdateForm/:id' element= {<StudentDataUpdationForm />} />
             <Route path='/studentDetails/:id' element= {<StudentDetails />} />
             <Route path='/staffRegForm' element= {<StaffRegistrationForm />} />
             <Route path='/staffUpdateForm/:staffId' element= {<StaffDataUpdationForm />} />
             <Route path='/staffList' element= {<StaffList />} />
+            <Route path='/staffDetails/:staffId' element={<StaffDetails />}/>
         </Routes>
         </main>
         <Footer />

@@ -1,12 +1,13 @@
-// src/components/LibraryHistoryForm.jsx
 import React, { useState } from "react";
 
 const LibraryHistoryForm = () => {
   // Form data and error states
   const [formData, setFormData] = useState({
-    bookName: "",
-    borrowDate: "",
-    returnDate: "",
+    id: "",
+    title: "",
+    author: "",
+    dueDate: "",
+    returnedDate: "",
     status: "",
   });
 
@@ -21,19 +22,27 @@ const LibraryHistoryForm = () => {
   const validate = () => {
     let validationErrors = {};
 
-    if (!formData.bookName.trim()) {
-      validationErrors.bookName = "Book Name is required";
+    if (!formData.id) {
+      validationErrors.id = "ID is required";
     }
 
-    if (!formData.borrowDate) {
-      validationErrors.borrowDate = "Borrow Date is required";
+    if (!formData.title.trim()) {
+      validationErrors.title = "Title is required";
     }
 
-    if (!formData.returnDate) {
-      validationErrors.returnDate = "Return Date is required";
+    if (!formData.author.trim()) {
+      validationErrors.author = "Author is required";
     }
 
-    if (!formData.status.trim()) {
+    if (!formData.dueDate) {
+      validationErrors.dueDate = "Due Date is required";
+    }
+
+    if (formData.status === "returned" && !formData.returnedDate) {
+      validationErrors.returnedDate = "Returned Date is required when status is 'returned'";
+    }
+
+    if (!formData.status) {
       validationErrors.status = "Status is required";
     }
 
@@ -50,67 +59,98 @@ const LibraryHistoryForm = () => {
     if (Object.keys(validationErrors).length === 0) {
       console.log("Library history data: ", formData);
       alert("Form Submitted Successfully!");
-      setFormData({ bookName: "", borrowDate: "", returnDate: "", status: "" }); // Reset form after successful submission
+      setFormData({
+        id: "",
+        title: "",
+        author: "",
+        dueDate: "",
+        returnedDate: "",
+        status: "",
+      }); // Reset form after successful submission
     }
   };
 
   return (
     <div
       className="min-h-screen bg-cover bg-center flex justify-center items-center"
-      style={{ backgroundImage: "url('/path-to-your-background-image.jpg')" }}
     >
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Library History Form</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Book Name */}
+          
+          {/* ID */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Book Name</label>
+            <label className="block text-sm font-medium text-gray-700">ID</label>
+            <input
+              type="number"
+              name="id"
+              value={formData.id}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${
+                errors.id ? "border-red-500" : "border-gray-300"
+              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+            />
+            {errors.id && <p className="text-red-500 text-sm mt-1">{errors.id}</p>}
+          </div>
+
+          {/* Title */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Title</label>
             <input
               type="text"
-              name="bookName"
-              value={formData.bookName}
+              name="title"
+              value={formData.title}
               onChange={handleChange}
               className={`mt-1 block w-full p-2 border ${
-                errors.bookName ? "border-red-500" : "border-gray-300"
+                errors.title ? "border-red-500" : "border-gray-300"
               } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.bookName && (
-              <p className="text-red-500 text-sm mt-1">{errors.bookName}</p>
-            )}
+            {errors.title && <p className="text-red-500 text-sm mt-1">{errors.title}</p>}
           </div>
 
-          {/* Borrow Date */}
+          {/* Author */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Borrow Date</label>
+            <label className="block text-sm font-medium text-gray-700">Author</label>
             <input
-              type="date"
-              name="borrowDate"
-              value={formData.borrowDate}
+              type="text"
+              name="author"
+              value={formData.author}
               onChange={handleChange}
               className={`mt-1 block w-full p-2 border ${
-                errors.borrowDate ? "border-red-500" : "border-gray-300"
+                errors.author ? "border-red-500" : "border-gray-300"
               } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.borrowDate && (
-              <p className="text-red-500 text-sm mt-1">{errors.borrowDate}</p>
-            )}
+            {errors.author && <p className="text-red-500 text-sm mt-1">{errors.author}</p>}
           </div>
 
-          {/* Return Date */}
+          {/* Due Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Return Date</label>
+            <label className="block text-sm font-medium text-gray-700">Due Date</label>
             <input
               type="date"
-              name="returnDate"
-              value={formData.returnDate}
+              name="dueDate"
+              value={formData.dueDate}
               onChange={handleChange}
               className={`mt-1 block w-full p-2 border ${
-                errors.returnDate ? "border-red-500" : "border-gray-300"
+                errors.dueDate ? "border-red-500" : "border-gray-300"
               } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.returnDate && (
-              <p className="text-red-500 text-sm mt-1">{errors.returnDate}</p>
-            )}
+            {errors.dueDate && <p className="text-red-500 text-sm mt-1">{errors.dueDate}</p>}
+          </div>
+
+          {/* Returned Date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Returned Date</label>
+            <input
+              type="date"
+              name="returnedDate"
+              value={formData.returnedDate}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${
+                errors.returnedDate ? "border-red-500" : "border-gray-300"
+              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+            />
+            {errors.returnedDate && <p className="text-red-500 text-sm mt-1">{errors.returnedDate}</p>}
           </div>
 
           {/* Status */}
@@ -125,12 +165,10 @@ const LibraryHistoryForm = () => {
               } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             >
               <option value="">Select Status</option>
-              <option value="Borrowed">Borrowed</option>
-              <option value="Returned">Returned</option>
+              <option value="issued">Issued</option>
+              <option value="returned">Returned</option>
             </select>
-            {errors.status && (
-              <p className="text-red-500 text-sm mt-1">{errors.status}</p>
-            )}
+            {errors.status && <p className="text-red-500 text-sm mt-1">{errors.status}</p>}
           </div>
 
           {/* Submit Button */}
