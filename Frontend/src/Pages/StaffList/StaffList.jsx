@@ -37,59 +37,63 @@ const StaffList = () => {
   return (
     <div className="container mx-auto p-6">
       <h2 className="text-2xl font-semibold mb-6 text-center mt-10">Staff List</h2>
-      <table className="min-w-full bg-white border">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 border">Staff ID</th>
-            <th className="py-2 px-4 border">Name</th>
-            <th className="py-2 px-4 border">Role</th>
-            <th className="py-2 px-4 border">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {staff.length > 0 ? (
-            staff.map((member) => (
-              <tr key={member.staffId} className="border-t">
-                <td className="py-2 px-4 border">{member.staffId}</td>
-                <td className="py-2 px-4 border">{member.name}</td>
-                <td className="py-2 px-4 border">{member.role}</td>
-                <td className="py-2 px-4 border">
-                  <button
-                    onClick={() => handleView(member.staffId)}
-                    className="bg-blue-500 text-white px-2 py-1 rounded mr-2 hover:bg-blue-600"
-                  >
-                    View
-                  </button>
-                  <button
-                    onClick={() => handleEdit(member.staffId)}
-                    className="bg-green-500 text-white px-2 py-1 rounded mr-2 hover:bg-green-600"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(member.staffId)}
-                    className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                  <button
-                    onClick={handleCreate} // Navigate to staff creation form
-                    className="bg-yellow-500 text-white px-2 py-1 m-2 rounded hover:bg-yellow-600"
-                  >
-                    Create
-                  </button>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-300 rounded-lg">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="py-2 px-4 border">Staff ID</th>
+              <th className="py-2 px-4 border">Name</th>
+              <th className="py-2 px-4 border">Role</th>
+              <th className="py-2 px-4 border">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {staff.length > 0 ? (
+              staff.map((member) => (
+                <tr key={member.staffId} className="border-t">
+                  <td className="py-2 px-4 border">{member.staffId}</td>
+                  <td className="py-2 px-4 border">{member.name}</td>
+                  <td className="py-2 px-4 border">{member.role}</td>
+                  <td className="py-2 px-4 border flex flex-col md:flex-row">
+                    <button
+                      onClick={() => handleView(member.staffId)}
+                      className="bg-blue-500 text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-blue-600"
+                    >
+                      View
+                    </button>
+                    <button
+                      onClick={() => handleEdit(member.staffId)}
+                      className="bg-green-500 text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-green-600"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(member.staffId)}
+                      className="bg-red-500 text-white px-2 py-1 rounded mb-2 md:mb-0 hover:bg-red-600"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="4" className="text-center py-4">
+                  No staff members found.
                 </td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="4" className="text-center py-4">
-                No staff members found.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+            )}
+          </tbody>
+        </table>
+      </div>
+      <div className="mt-4 text-center">
+        <button
+          onClick={handleCreate} // Navigate to staff creation form
+          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+        >
+          Create Staff
+        </button>
+      </div>
     </div>
   );
 };

@@ -121,8 +121,8 @@ const StudentDataUpdationForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+    <div className="min-h-screen bg-cover bg-center flex justify-center items-center p-4">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Update Student Data</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Student ID (non-editable) */}
@@ -264,10 +264,11 @@ const StudentDataUpdationForm = () => {
               className={`mt-1 block w-full p-2 border ${
                 errors.street ? "border-red-500" : "border-gray-300"
               } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-              />
-              {errors.street && <p className="text-red-500 text-sm mt-1">{errors.street}</p>}
-            </div>
-            <div>
+            />
+            {errors.street && <p className="text-red-500 text-sm mt-1">{errors.street}</p>}
+          </div>
+
+          <div>
             <label className="block text-sm font-medium text-gray-700">City</label>
             <input
               type="text"
@@ -308,8 +309,9 @@ const StudentDataUpdationForm = () => {
             />
             {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode}</p>}
           </div>
-           {/* Submit Button */}
-           <div className="text-center">
+
+          {/* Submit Button */}
+          <div className="text-center">
             <button
               type="submit"
               className="bg-[#0a4275] text-white px-6 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"

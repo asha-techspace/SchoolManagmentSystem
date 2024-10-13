@@ -19,10 +19,9 @@ const studentSchema = new mongoose.Schema({
   studentId: {type:String, unique: true},
   name : {type:String, required: true},
   dob : {type:Date, required:true},
-  age : {type:Number, required:true},
   gender : {type:String, enum: ['male','female','other'], required: true},
   class: {type: Number, required:true},
-  division:{type: String, required:true},
+  division: {type: String, required:true},
   address: {
     street : {type: String},
     city : {type: String},
@@ -32,6 +31,7 @@ const studentSchema = new mongoose.Schema({
   feesHistory: [
     {
       totalFees: {type:Number},
+      feesType : {type:String, enum: ['tutiton','hostel', 'pta','activities','miscellaneous'], required: true},
       transactions: [feeTransactionSchema],
       dueDate: {type:Date},
     },

@@ -1,14 +1,17 @@
-// src/components/FeesRemarksForm.jsx
 import React, { useState } from "react";
 
-const FeesRemarksForm = () => {
+const FeesRemarksCreateForm = () => {
   // Form data and error states
   const [formData, setFormData] = useState({
     studentId: "",
     feeType: "",
-    amount: "",
+
     paymentDate: "",
     remarks: "",
+    date: new Date().toISOString().split("T")[0], // Default to current date
+    amountPaid: "",
+    totalFees: "",
+    dueDate: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -26,13 +29,11 @@ const FeesRemarksForm = () => {
       validationErrors.studentId = "Student ID is required";
     }
 
-    if (!formData.feeType.trim()) {
+    if (!formData.feeType) {
       validationErrors.feeType = "Fee Type is required";
     }
 
-    if (!formData.amount || isNaN(formData.amount)) {
-      validationErrors.amount = "Amount must be a valid number";
-    }
+
 
     if (!formData.paymentDate) {
       validationErrors.paymentDate = "Payment Date is required";
@@ -40,6 +41,22 @@ const FeesRemarksForm = () => {
 
     if (!formData.remarks.trim()) {
       validationErrors.remarks = "Remarks are required";
+    }
+
+    if (!formData.date) {
+      validationErrors.date = "Date is required";
+    }
+
+    if (!formData.amountPaid || isNaN(formData.amountPaid)) {
+      validationErrors.amountPaid = "Amount Paid must be a valid number";
+    }
+
+    if (formData.totalFees && isNaN(formData.totalFees)) {
+      validationErrors.totalFees = "Total Fees must be a valid number";
+    }
+
+    if (!formData.dueDate) {
+      validationErrors.dueDate = "Due Date is required";
     }
 
     return validationErrors;
@@ -55,18 +72,26 @@ const FeesRemarksForm = () => {
     if (Object.keys(validationErrors).length === 0) {
       console.log("Fees remarks data: ", formData);
       alert("Form Submitted Successfully!");
-      setFormData({ studentId: "", feeType: "", amount: "", paymentDate: "", remarks: "" }); // Reset form after successful submission
+      setFormData({
+        studentId: "",
+        feeType: "",
+
+        paymentDate: "",
+        remarks: "",
+        date: new Date().toISOString().split("T")[0],
+        amountPaid: "",
+        totalFees: "",
+        dueDate: "",
+      }); // Reset form after successful submission
     }
   };
 
   return (
-    <div
-      className="min-h-screen bg-cover bg-center flex justify-center items-center"
-      style={{ backgroundImage: "url('/path-to-your-background-image.jpg')" }}
-    >
+    <div className="min-h-screen bg-cover bg-center flex justify-center items-center">
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Fees Remarks Form</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
+
           {/* Student ID */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Student ID</label>
@@ -75,48 +100,33 @@ const FeesRemarksForm = () => {
               name="studentId"
               value={formData.studentId}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.studentId ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.studentId ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.studentId && (
-              <p className="text-red-500 text-sm mt-1">{errors.studentId}</p>
-            )}
+            {errors.studentId && <p className="text-red-500 text-sm mt-1">{errors.studentId}</p>}
           </div>
 
-          {/* Fee Type */}
+          {/* Fee Type (Dropdown) */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Fee Type</label>
-            <input
-              type="text"
+            <select
               name="feeType"
               value={formData.feeType}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.feeType ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-            />
-            {errors.feeType && (
-              <p className="text-red-500 text-sm mt-1">{errors.feeType}</p>
-            )}
+              className={`mt-1 block w-full p-2 border ${errors.feeType ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+            >
+              <option value="">Select Fee Type</option>
+              <option value="tutition">Tuition</option>
+              <option value="hostel">Hostel</option>
+              <option value="pta">PTA</option>
+              <option value="activities">Activities</option>
+              <option value="miscellaneous">Miscellaneous</option>
+            </select>
+            {errors.feeType && <p className="text-red-500 text-sm mt-1">{errors.feeType}</p>}
           </div>
 
-          {/* Amount */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Amount</label>
-            <input
-              type="number"
-              name="amount"
-              value={formData.amount}
-              onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.amount ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-            />
-            {errors.amount && (
-              <p className="text-red-500 text-sm mt-1">{errors.amount}</p>
-            )}
-          </div>
+
 
           {/* Payment Date */}
           <div>
@@ -126,13 +136,70 @@ const FeesRemarksForm = () => {
               name="paymentDate"
               value={formData.paymentDate}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.paymentDate ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.paymentDate ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.paymentDate && (
-              <p className="text-red-500 text-sm mt-1">{errors.paymentDate}</p>
+            {errors.paymentDate && <p className="text-red-500 text-sm mt-1">{errors.paymentDate}</p>}
+          </div>
+
+          {/* Date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Date</label>
+            <input
+              type="date"
+              name="date"
+              value={formData.date}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${errors.date ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+            />
+            {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
+          </div>
+
+          {/* Amount Paid */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Amount Paid</label>
+            <input
+              type="number"
+              name="amountPaid"
+              value={formData.amountPaid}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${errors.amountPaid ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+            />
+            {errors.amountPaid && (
+              <p className="text-red-500 text-sm mt-1">{errors.amountPaid}</p>
             )}
+          </div>
+
+          {/* Total Fees */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Total Fees</label>
+            <input
+              type="number"
+              name="totalFees"
+              value={formData.totalFees}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${errors.totalFees ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+            />
+            {errors.totalFees && (
+              <p className="text-red-500 text-sm mt-1">{errors.totalFees}</p>
+            )}
+          </div>
+
+          {/* Due Date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Due Date</label>
+            <input
+              type="date"
+              name="dueDate"
+              value={formData.dueDate}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${errors.dueDate ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+            />
+            {errors.dueDate && <p className="text-red-500 text-sm mt-1">{errors.dueDate}</p>}
           </div>
 
           {/* Remarks */}
@@ -142,13 +209,10 @@ const FeesRemarksForm = () => {
               name="remarks"
               value={formData.remarks}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.remarks ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.remarks ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.remarks && (
-              <p className="text-red-500 text-sm mt-1">{errors.remarks}</p>
-            )}
+            {errors.remarks && <p className="text-red-500 text-sm mt-1">{errors.remarks}</p>}
           </div>
 
           {/* Submit Button */}
@@ -166,4 +230,4 @@ const FeesRemarksForm = () => {
   );
 };
 
-export default FeesRemarksForm;
+export default FeesRemarksCreateForm;

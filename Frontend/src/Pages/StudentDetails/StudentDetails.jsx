@@ -1,4 +1,3 @@
-// src/components/StudentDetail.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -13,31 +12,48 @@ const StudentDetails = () => {
   useEffect(() => {
     // Mock student data fetching
     const mockStudentData = [
-      { id: 1, fullname: 'John Doe', age: 18, class: '12A' },
-      { id: 2, fullname: 'Jane Smith', age: 17, class: '11B' },
-      { id: 3, fullname: 'Samuel Green', age: 19, class: '12C' },
-      { id: 4, fullname: 'Asha Baburaj', age: 18, class:'12G'},
-      { id: 5, fullname: 'Arjun B S', age: 18, class:'12G'},
+      {
+        id: 1,
+        fullName: 'John Doe',
+        dob: '2005-05-14',
+        gender: 'Male',
+        age: 18,
+        class: '12A',
+        division: 'A',
+        address: {
+          street: '123 Main St',
+          city: 'Cityville',
+          state: 'Stateville',
+          postalCode: '12345',
+        },
+      },
+      // Add more mock student data here
     ];
 
     const mockFeesHistory = [
-      { studentId: 1, type: 'Tuition', amount: 2000, paymentDate: '2024-01-15', remarks: 'Paid' },
-      { studentId: 1, type: 'Library', amount: 150, paymentDate: '2024-01-20', remarks: 'Paid' },
-      { studentId: 2, type: 'arts', amount: 150, paymentDate: '2024-01-20', remarks: 'Paid' },
-      { studentId: 3, type: 'Tuition', amount: 2000, paymentDate: '2024-01-15', remarks: 'Paid' },
-      { studentId: 4, type: 'Library', amount: 150, paymentDate: '2024-01-20', remarks: 'Paid' },
-      { studentId: 5, type: 'arts', amount: 150, paymentDate: '2024-01-20', remarks: 'Paid' },
-
+      {
+        studentId: 1,
+        feeType: 'Tuition',
+        amountPaid: 2000,
+        totalFees: 2500,
+        paymentDate: '2024-01-15',
+        dueDate: '2024-01-31',
+        remarks: 'Paid',
+      },
+      // Add more mock fees history here
     ];
 
     const mockLibraryHistory = [
-      { studentId: 1, bookName: 'Harry Potter', borrowDate: '2023-12-01', returnDate: '2023-12-20', status: 'Returned' },
-      { studentId: 1, bookName: 'The Alchemist ', borrowDate: '2024-01-05', returnDate: null, status: 'Borrowed' },
-      { studentId: 2, bookName: 'Harry Potter', borrowDate: '2023-12-01', returnDate: '2023-12-20', status: 'Returned' },
-      { studentId: 3, bookName: 'The Alchemist ', borrowDate: '2024-01-05', returnDate: null, status: 'Borrowed' },
-      { studentId: 4, bookName: 'Harry Potter', borrowDate: '2023-12-01', returnDate: '2023-12-20', status: 'Returned' },
-      { studentId: 5, bookName: 'The Alchemist ', borrowDate: '2024-01-05', returnDate: null, status: 'Borrowed' },
-      
+      {
+        studentId: 1,
+        bookId: 101,
+        title: 'Harry Potter',
+        author: 'J.K. Rowling',
+        dueDate: '2024-01-15',
+        returnedDate: '2024-01-12',
+        status: 'Returned',
+      },
+      // Add more mock library history here
     ];
 
     const selectedStudent = mockStudentData.find((s) => s.id === parseInt(id));
@@ -53,71 +69,93 @@ const StudentDetails = () => {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-semibold mb-4">Student Details</h2>
-      <p><strong>ID:</strong> {student.id}</p>
-      <p><strong>Name:</strong> {student.fullname}</p>
-      <p><strong>Age:</strong> {student.age}</p>
-      <p><strong>Class:</strong> {student.class}</p>
+    <div className="container mx-auto p-4 md:p-6 lg:p-8">
+      {/* Student Details */}
+      <h2 className="text-xl sm:text-2xl lg:text-3xl font-semibold mb-4 text-center">Student Details</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <p><strong>ID:</strong> {student.id}</p>
+        <p><strong>Name:</strong> {student.fullName}</p>
+        <p><strong>Date of Birth:</strong> {student.dob}</p>
+        <p><strong>Gender:</strong> {student.gender}</p>
+        <p><strong>Age:</strong> {student.age}</p>
+        <p><strong>Class:</strong> {student.class}</p>
+        <p><strong>Division:</strong> {student.division}</p>
+        <p>
+          <strong>Address:</strong> 
+          {`${student.address.street}, ${student.address.city}, ${student.address.state}, ${student.address.postalCode}`}
+        </p>
+      </div>
 
       {/* Fees History */}
-      <h3 className="text-xl font-semibold mt-6">Fees History</h3>
-      <table className="min-w-full bg-white border mt-4">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 border">Type</th>
-            <th className="py-2 px-4 border">Amount</th>
-            <th className="py-2 px-4 border">Payment Date</th>
-            <th className="py-2 px-4 border">Remarks</th>
-          </tr>
-        </thead>
-        <tbody>
-          {feesHistory.length > 0 ? (
-            feesHistory.map((fee, index) => (
-              <tr key={index} className="border-t">
-                <td className="py-2 px-4 border">{fee.type}</td>
-                <td className="py-2 px-4 border">{fee.amount}</td>
-                <td className="py-2 px-4 border">{fee.paymentDate}</td>
-                <td className="py-2 px-4 border">{fee.remarks}</td>
-              </tr>
-            ))
-          ) : (
+      <h3 className="text-lg sm:text-xl font-semibold mt-8">Fees History</h3>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border mt-4 text-sm sm:text-base">
+          <thead>
             <tr>
-              <td colSpan="4" className="text-center py-4">No fees history found.</td>
+              <th className="py-2 px-4 border">Fee Type</th>
+              <th className="py-2 px-4 border">Amount Paid</th>
+              <th className="py-2 px-4 border">Total Fees</th>
+              <th className="py-2 px-4 border">Payment Date</th>
+              <th className="py-2 px-4 border">Due Date</th>
+              <th className="py-2 px-4 border">Remarks</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {feesHistory.length > 0 ? (
+              feesHistory.map((fee, index) => (
+                <tr key={index} className="border-t">
+                  <td className="py-2 px-4 border">{fee.feeType}</td>
+                  <td className="py-2 px-4 border">{fee.amountPaid}</td>
+                  <td className="py-2 px-4 border">{fee.totalFees}</td>
+                  <td className="py-2 px-4 border">{fee.paymentDate}</td>
+                  <td className="py-2 px-4 border">{fee.dueDate}</td>
+                  <td className="py-2 px-4 border">{fee.remarks}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="text-center py-4">No fees history found.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
       {/* Library History */}
-      <h3 className="text-xl font-semibold mt-6">Library History</h3>
-      <table className="min-w-full bg-white border mt-4">
-        <thead>
-          <tr>
-            <th className="py-2 px-4 border">Book Name</th>
-            <th className="py-2 px-4 border">borrowDate</th>
-            <th className="py-2 px-4 border">returnDate</th>
-            <th className="py-2 px-4 border">status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {libraryHistory.length > 0 ? (
-            libraryHistory.map((book, index) => (
-              <tr key={index} className="border-t">
-                <td className="py-2 px-4 border">{book.bookName}</td>
-                <td className="py-2 px-4 border">{book.borrowDate}</td>
-                <td className="py-2 px-4 border">{book.returnDate}</td>
-                <td className="py-2 px-4 border">{book.status}</td>
-              </tr>
-            ))
-          ) : (
+      <h3 className="text-lg sm:text-xl font-semibold mt-8">Library History</h3>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border mt-4 text-sm sm:text-base">
+          <thead>
             <tr>
-              <td colSpan="4" className="text-center py-4">No Library history found.</td>
+              <th className="py-2 px-4 border">Book ID</th>
+              <th className="py-2 px-4 border">Title</th>
+              <th className="py-2 px-4 border">Author</th>
+              <th className="py-2 px-4 border">Due Date</th>
+              <th className="py-2 px-4 border">Returned Date</th>
+              <th className="py-2 px-4 border">Status</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {libraryHistory.length > 0 ? (
+              libraryHistory.map((book, index) => (
+                <tr key={index} className="border-t">
+                  <td className="py-2 px-4 border">{book.bookId}</td>
+                  <td className="py-2 px-4 border">{book.title}</td>
+                  <td className="py-2 px-4 border">{book.author}</td>
+                  <td className="py-2 px-4 border">{book.dueDate}</td>
+                  <td className="py-2 px-4 border">{book.returnedDate || 'Not Returned'}</td>
+                  <td className="py-2 px-4 border">{book.status}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="6" className="text-center py-4">No library history found.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
+    </div>
   );
 };
 
