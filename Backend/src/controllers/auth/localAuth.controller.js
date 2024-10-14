@@ -47,3 +47,36 @@ export const loginSuccess = async (req, res) => {
       res.status(400).json({ message: "Not Authorized" });
     }
   };
+
+  export const logout = async (req, res) => {
+    try {
+        console.log(req.user)
+        const user = await UserModel.findById(req?.user?._id);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+        await user.save();
+        res.cookie("token", "", {
+            httpOnly: true,
+            expires: new Date(Date.now()), // Expire the cookie immediately
+        }).cookie("connect.sid", "", {
+            httpOnly: true,
+            expires: new Date(0), 
+        }).cookie("user", "", {
+            httpOnly: true,
+            expires: new Date(0), 
+        })
+        return res.status(200).json({
+            success: true,
+            message: "User successfully logged out"
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}

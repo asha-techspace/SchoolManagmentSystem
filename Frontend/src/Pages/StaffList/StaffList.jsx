@@ -57,24 +57,31 @@ const StaffList = () => {
                   <td className="py-2 px-4 border flex flex-col md:flex-row">
                     <button
                       onClick={() => handleView(member.staffId)}
-                      className="bg-blue-500 text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-blue-600"
+                      className="bg-deep-red text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-red-700"
                     >
                       View
                     </button>
                     <button
                       onClick={() => handleEdit(member.staffId)}
-                      className="bg-green-500 text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-green-600"
+                      className="bg-deep-blue text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-blue-700"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(member.staffId)}
-                      className="bg-red-500 text-white px-2 py-1 rounded mb-2 md:mb-0 hover:bg-red-600"
+                      className="bg-deep-red text-white px-2 py-1 rounded mb-2 md:mb-0 hover:bg-red-700"
                     >
                       Delete
                     </button>
+                    <button
+                  onClick={handleCreate} // Navigate to staff creation form
+                  className="bg-deep-blue text-white px-4 py-2 rounded mb-2 md:mb-0 ml-2  hover:bg-blue-700"
+                >
+                  Create Staff
+                </button>
                   </td>
-                </tr>
+            </tr>
+                
               ))
             ) : (
               <tr>
@@ -83,16 +90,9 @@ const StaffList = () => {
                 </td>
               </tr>
             )}
+            
           </tbody>
         </table>
-      </div>
-      <div className="mt-4 text-center">
-        <button
-          onClick={handleCreate} // Navigate to staff creation form
-          className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-        >
-          Create Staff
-        </button>
       </div>
     </div>
   );

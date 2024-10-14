@@ -62,25 +62,25 @@ const StudentList = () => {
                     <div className="flex flex-col sm:flex-row sm:justify-center gap-2 sm:gap-3">
                       <button
                         onClick={() => handleView(student.id)}
-                        className="bg-blue-500 text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded hover:bg-blue-600"
+                        className="bg-deep-red text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded hover:bg-red-700"
                       >
                         View
                       </button>
                       <button
                         onClick={() => handleEdit(student.id)}
-                        className="bg-green-500 text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded hover:bg-green-600"
+                        className="bg-deep-blue text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded hover:bg-blue-700"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(student.id)}
-                        className="bg-red-500 text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded hover:bg-red-600"
+                        className="bg-deep-red text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded hover:bg-red-700"
                       >
                         Delete
                       </button>
                       <button
                         onClick={handleCreate}
-                        className="bg-yellow-500 text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded hover:bg-yellow-600"
+                        className="bg-deep-blue text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded hover:bg-blue-700"
                       >
                         Create
                       </button>
