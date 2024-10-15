@@ -13,9 +13,10 @@ import StaffList from '../Pages/StaffList/StaffList'
 import StaffDataUpdationForm from '../Pages/StaffForm/StaffDataUpdationForm'
 import StaffDetails from '../Pages/StaffDetails/StaffDetails'
 import StudentDataUpdationForm from '../Pages/StudentForm/StudentDataUpdationForm'
-import AdminDashBoard from '../Pages/Dashboard/AdminDashBoard'
+import AdminDashBoard from '../Pages/Dashboard/AdminDashboard'
 import NoticeBoard from '../Components/AdminDashBoardComponents/NoticeBoard';
-
+import OfficeStaffDashboard from '../Pages/Dashboard/OfficeStaffDashboard'
+import LibrarianDashBoard from '../Pages/Dashboard/LibrarianDashBoard'
 const LayoutRoutes = () => {
   return (
     <Router>
@@ -36,6 +37,9 @@ const LayoutRoutes = () => {
             <Route path='/staffDetails/:staffId' element={<StaffDetails />}/>
             <Route path='/adminDashboard' element={<AdminDashBoard />} />
             <Route path='/events' element={<NoticeBoard />} />
+            <Route path='/officeStaffDashboard' element={<OfficeStaffDashboard />} />
+            <Route path='/librarianDashboard' element={<LibrarianDashBoard />} />
+
         </Routes>
         </main>
         <Footer />

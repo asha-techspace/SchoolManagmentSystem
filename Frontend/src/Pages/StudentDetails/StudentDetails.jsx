@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import ConfirmationModal from '../../Components/ConfirmationModal/ConfirmationModal ';
 
 const StudentDetails = () => {
   const { id } = useParams(); // Get the student ID from the URL
@@ -8,6 +9,30 @@ const StudentDetails = () => {
   const [student, setStudent] = useState(null);
   const [feesHistory, setFeesHistory] = useState([]);
   const [libraryHistory, setLibraryHistory] = useState([]);
+  const [editingFee, setEditingFee] = useState(null); // Track the fee row being edited
+  const [editingLibrary, setEditingLibrary] = useState(null); // Track the library row being edited
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState(null);
+  const [actionType, setActionType] = useState(""); // 'Edit' or 'Delete'
+
+  const openDeleteModal = (fee,book) => {
+    setCurrentRecord(fee,book);
+    setActionType("Delete");
+    setModalOpen(true);
+  };
+  const handleConfirm = () => {
+    if (actionType === "Delete") {
+      // Call your delete function, e.g., deleteLibraryHistory(currentRecord.id);
+    } else if (actionType === "Edit") {
+      // Call your edit function, e.g., editLibraryHistory(currentRecord.id);
+    }
+    setModalOpen(false);
+  };
+  
+  const closeModal = () => {
+    setModalOpen(false);
+    setCurrentRecord(null);
+  };
 
   useEffect(() => {
     // Mock student data fetching
@@ -27,7 +52,6 @@ const StudentDetails = () => {
           postalCode: '12345',
         },
       },
-      // Add more mock student data here
     ];
 
     const mockFeesHistory = [
@@ -40,7 +64,6 @@ const StudentDetails = () => {
         dueDate: '2024-01-31',
         remarks: 'Paid',
       },
-      // Add more mock fees history here
     ];
 
     const mockLibraryHistory = [
@@ -53,7 +76,6 @@ const StudentDetails = () => {
         returnedDate: '2024-01-12',
         status: 'Returned',
       },
-      // Add more mock library history here
     ];
 
     const selectedStudent = mockStudentData.find((s) => s.id === parseInt(id));
@@ -63,6 +85,42 @@ const StudentDetails = () => {
       setLibraryHistory(mockLibraryHistory.filter((l) => l.studentId === selectedStudent.id));
     }
   }, [id]);
+
+  const handleEditFee = (index) => {
+    setEditingFee(index); // Enable editing for selected fee row
+  };
+
+  const handleSaveFee = (index) => {
+    setEditingFee(null); // Disable editing after saving
+    setActionType("Edit");
+      setModalOpen(true);
+    // Here you can add logic to save the changes (e.g., send data to the server)
+  };
+
+  const handleEditLibrary = (index) => {
+    setEditingLibrary(index); // Enable editing for selected library row
+  };
+
+  const handleSaveLibrary = (index) => {
+    setEditingLibrary(null); // Disable editing after saving
+    setActionType("Edit");
+      setModalOpen(true);
+    // Add logic to save changes
+  };
+
+  const handleInputChange = (e, index, type, field) => {
+    const value = e.target.value;
+
+    if (type === 'fees') {
+      const updatedFees = [...feesHistory];
+      updatedFees[index][field] = value;
+      setFeesHistory(updatedFees);
+    } else if (type === 'library') {
+      const updatedLibrary = [...libraryHistory];
+      updatedLibrary[index][field] = value;
+      setLibraryHistory(updatedLibrary);
+    }
+  };
 
   if (!student) {
     return <p>Loading...</p>;
@@ -98,23 +156,110 @@ const StudentDetails = () => {
               <th className="py-2 px-4 border">Payment Date</th>
               <th className="py-2 px-4 border">Due Date</th>
               <th className="py-2 px-4 border">Remarks</th>
+              <th className="py-2 px-4 border">Actions</th>
             </tr>
           </thead>
           <tbody>
             {feesHistory.length > 0 ? (
               feesHistory.map((fee, index) => (
                 <tr key={index} className="border-t">
-                  <td className="py-2 px-4 border">{fee.feeType}</td>
-                  <td className="py-2 px-4 border">{fee.amountPaid}</td>
-                  <td className="py-2 px-4 border">{fee.totalFees}</td>
-                  <td className="py-2 px-4 border">{fee.paymentDate}</td>
-                  <td className="py-2 px-4 border">{fee.dueDate}</td>
-                  <td className="py-2 px-4 border">{fee.remarks}</td>
+                  <td className="py-2 px-4 border">
+                    {editingFee === index ? (
+                      <input
+                        type="text"
+                        value={fee.feeType}
+                        onChange={(e) => handleInputChange(e, index, 'fees', 'feeType')}
+                        className="border p-1"
+                      />
+                    ) : fee.feeType}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {editingFee === index ? (
+                      <input
+                        type="number"
+                        value={fee.amountPaid}
+                        onChange={(e) => handleInputChange(e, index, 'fees', 'amountPaid')}
+                        className="border p-1"
+                      />
+                    ) : fee.amountPaid}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {editingFee === index ? (
+                      <input
+                        type="number"
+                        value={fee.totalFees}
+                        onChange={(e) => handleInputChange(e, index, 'fees', 'totalFees')}
+                        className="border p-1"
+                      />
+                    ) : fee.totalFees}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {editingFee === index ? (
+                      <input
+                        type="date"
+                        value={fee.paymentDate}
+                        onChange={(e) => handleInputChange(e, index, 'fees', 'paymentDate')}
+                        className="border p-1"
+                      />
+                    ) : fee.paymentDate}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {editingFee === index ? (
+                      <input
+                        type="date"
+                        value={fee.dueDate}
+                        onChange={(e) => handleInputChange(e, index, 'fees', 'dueDate')}
+                        className="border p-1"
+                      />
+                    ) : fee.dueDate}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {editingFee === index ? (
+                      <input
+                        type="text"
+                        value={fee.remarks}
+                        onChange={(e) => handleInputChange(e, index, 'fees', 'remarks')}
+                        className="border p-1"
+                      />
+                    ) : fee.remarks}
+                  </td>
+                  <ConfirmationModal
+  isOpen={isModalOpen}
+  onClose={closeModal}
+  onConfirm={handleConfirm}
+  actionType={actionType}
+/>
+
+                  <td className="py-2 px-4 border">
+                    {editingFee === index ? (
+                      <button
+                        onClick={() => handleSaveFee(index)}
+                        className="bg-deep-red hover:bg-red-700 text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded"
+                      >
+                        Save
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleEditFee(index)}
+                        className="bg-deep-blue hover:bg-blue-800 text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded"
+                      >
+                        Edit
+                      </button>
+                    )}
+                 
+                  
+                    <button
+                     onClick={() => openDeleteModal(fee)}
+                     className="bg-deep-red hover:bg-red-700 text-white text-xs sm:text-sm lg:text-base px-2 py-1 ml-4 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded"
+                     >Delete
+
+                     </button>
+                     </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="text-center py-4">No fees history found.</td>
+                <td colSpan="7" className="text-center py-4">No fees history found.</td>
               </tr>
             )}
           </tbody>
@@ -133,23 +278,105 @@ const StudentDetails = () => {
               <th className="py-2 px-4 border">Due Date</th>
               <th className="py-2 px-4 border">Returned Date</th>
               <th className="py-2 px-4 border">Status</th>
+              <th className="py-2 px-4 border">Actions</th>
             </tr>
           </thead>
           <tbody>
             {libraryHistory.length > 0 ? (
               libraryHistory.map((book, index) => (
                 <tr key={index} className="border-t">
-                  <td className="py-2 px-4 border">{book.bookId}</td>
-                  <td className="py-2 px-4 border">{book.title}</td>
-                  <td className="py-2 px-4 border">{book.author}</td>
-                  <td className="py-2 px-4 border">{book.dueDate}</td>
-                  <td className="py-2 px-4 border">{book.returnedDate || 'Not Returned'}</td>
-                  <td className="py-2 px-4 border">{book.status}</td>
+                  <td className="py-2 px-4 border">
+                    {editingLibrary === index ? (
+                      <input
+                        type="number"
+                        value={book.bookId}
+                        onChange={(e) => handleInputChange(e, index, 'library', 'bookId')}
+                        className="border p-1"
+                      />
+                    ) : book.bookId}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {editingLibrary === index ? (
+                      <input
+                        type="text"
+                        value={book.title}
+                        onChange={(e) => handleInputChange(e, index, 'library', 'title')}
+                        className="border p-1"
+                      />
+                    ) : book.title}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {editingLibrary === index ? (
+                      <input
+                        type="text"
+                        value={book.author}
+                        onChange={(e) => handleInputChange(e, index, 'library', 'author')}
+                        className="border p-1"
+                      />
+                    ) : book.author}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {editingLibrary === index ? (
+                      <input
+                        type="date"
+                        value={book.dueDate}
+                        onChange={(e) => handleInputChange(e, index, 'library', 'dueDate')}
+                        className="border p-1"
+                      />
+                    ) : book.dueDate}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {editingLibrary === index ? (
+                      <input
+                        type="date"
+                        value={book.returnedDate}
+                        onChange={(e) => handleInputChange(e, index, 'library', 'returnedDate')}
+                        className="border p-1"
+                      />
+                    ) : book.returnedDate}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {editingLibrary === index ? (
+                      <select
+                        value={book.status}
+                        onChange={(e) => handleInputChange(e, index, 'library', 'status')}
+                        className="border p-1"
+                      >
+                        <option value="issued">Issued</option>
+                        <option value="returned">Returned</option>
+                      </select>
+                    ) : book.status}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {editingLibrary === index ? (
+                      <button
+                        onClick={() => handleSaveLibrary(index)}
+                        className="bg-deep-red hover:bg-red-700 text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded"
+                      >
+                        Save
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleEditLibrary(index)}
+                        className="bg-deep-blue hover:bg-blue-800 text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded"
+                      >
+                        Edit
+                      </button>
+                    )}
+
+                       <button
+                     onClick={() => openDeleteModal(book)}
+                     className="bg-deep-red hover:bg-red-700 text-white text-xs sm:text-sm lg:text-base px-2 py-1 ml-4 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded"
+                     >Delete
+
+                     </button> 
+
+                  </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="6" className="text-center py-4">No library history found.</td>
+                <td colSpan="7" className="text-center py-4">No library history found.</td>
               </tr>
             )}
           </tbody>
@@ -160,3 +387,4 @@ const StudentDetails = () => {
 };
 
 export default StudentDetails;
+

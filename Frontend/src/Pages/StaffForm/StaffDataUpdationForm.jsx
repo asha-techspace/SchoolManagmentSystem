@@ -1,8 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import ConfirmationModal from '../../Components/ConfirmationModal/ConfirmationModal '
 
 const StaffDataUpdationForm = () => {
   const { staffId } = useParams(); // Get staffId from the URL or route params
+
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState(null);
+  const [actionType, setActionType] = useState(""); // 'Edit' or 'Delete'
+
+  
+  const handleConfirm = () => {
+    if (actionType === "Delete") {
+      // Call your delete function, e.g., deleteLibraryHistory(currentRecord.id);
+    } else if (actionType === "Edit") {
+      // Call your edit function, e.g., editLibraryHistory(currentRecord.id);
+    }
+    setModalOpen(false);
+  };
+  
+  const closeModal = () => {
+    setModalOpen(false);
+    setCurrentRecord(null);
+  };
 
   // Initial form data (mock data for now, replace with fetched data from backend)
   const [formData, setFormData] = useState({
@@ -128,7 +148,8 @@ const StaffDataUpdationForm = () => {
 
     if (Object.keys(validationErrors).length === 0) {
       console.log("Updated Staff data: ", formData);
-      alert("Staff Data Updated Successfully!");
+      setActionType("Edit");
+      setModalOpen(true);
       // Logic for updating the data in the backend
     }
   };
@@ -138,7 +159,12 @@ const StaffDataUpdationForm = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Staff Data Updation Form</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
-
+        <ConfirmationModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            onConfirm={handleConfirm}
+            actionType={actionType}
+          />
           {/* Staff ID (Non-editable) */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Staff ID</label>

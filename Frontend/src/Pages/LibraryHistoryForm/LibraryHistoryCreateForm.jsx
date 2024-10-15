@@ -3,7 +3,8 @@ import React, { useState } from "react";
 const LibraryHistoryForm = () => {
   // Form data and error states
   const [formData, setFormData] = useState({
-    id: "",
+    student_id: "",
+    book_id: "",
     title: "",
     author: "",
     dueDate: "",
@@ -22,8 +23,12 @@ const LibraryHistoryForm = () => {
   const validate = () => {
     let validationErrors = {};
 
-    if (!formData.id) {
-      validationErrors.id = "ID is required";
+    if (!formData.student_id) {
+      validationErrors.student_id = "Student ID is required";
+    }
+
+    if (!formData.book_id) {
+      validationErrors.book_id = "Book ID is required";
     }
 
     if (!formData.title.trim()) {
@@ -60,7 +65,8 @@ const LibraryHistoryForm = () => {
       console.log("Library history data: ", formData);
       alert("Form Submitted Successfully!");
       setFormData({
-        id: "",
+        student_id: "",
+        book_id: "",
         title: "",
         author: "",
         dueDate: "",
@@ -78,21 +84,35 @@ const LibraryHistoryForm = () => {
         <h2 className="text-2xl font-bold mb-6 text-center">Library History Form</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           
-          {/* ID */}
+          {/* Student ID */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">ID</label>
+            <label className="block text-sm font-medium text-gray-700">Student ID</label>
             <input
               type="number"
-              name="id"
-              value={formData.id}
+              name="student_id"
+              value={formData.student_id}
               onChange={handleChange}
               className={`mt-1 block w-full p-2 border ${
-                errors.id ? "border-red-500" : "border-gray-300"
+                errors.student_id ? "border-red-500" : "border-gray-300"
               } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.id && <p className="text-red-500 text-sm mt-1">{errors.id}</p>}
+            {errors.student_id && <p className="text-red-500 text-sm mt-1">{errors.student_id}</p>}
           </div>
 
+            {/* Book ID */}
+            <div>
+            <label className="block text-sm font-medium text-gray-700">Book ID</label>
+            <input
+              type="number"
+              name="book_id"
+              value={formData.book_id}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${
+                errors.book_id ? "border-red-500" : "border-gray-300"
+              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+            />
+            {errors.book_id && <p className="text-red-500 text-sm mt-1">{errors.book_id}</p>}
+          </div>
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Title</label>

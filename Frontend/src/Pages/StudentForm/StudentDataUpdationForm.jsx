@@ -1,8 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import ConfirmationModal from '../../Components/ConfirmationModal/ConfirmationModal '
 
 const StudentDataUpdationForm = () => {
   const { id } = useParams(); // Get the student ID from the URL
+
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [currentRecord, setCurrentRecord] = useState(null);
+  const [actionType, setActionType] = useState(""); // 'Edit' or 'Delete'
+
+  
+  const handleConfirm = () => {
+    if (actionType === "Delete") {
+      // Call your delete function, e.g., deleteLibraryHistory(currentRecord.id);
+    } else if (actionType === "Edit") {
+      // Call your edit function, e.g., editLibraryHistory(currentRecord.id);
+    }
+    setModalOpen(false);
+  };
+  
+  const closeModal = () => {
+    setModalOpen(false);
+    setCurrentRecord(null);
+  };
 
   // Initial form state with the student's data
   const [formData, setFormData] = useState({
@@ -115,8 +135,10 @@ const StudentDataUpdationForm = () => {
 
     if (Object.keys(validationErrors).length === 0) {
       console.log("Updated Student Data: ", formData);
-      alert("Student data updated successfully!");
       // Reset or redirect logic here
+      setActionType("Edit");
+      setModalOpen(true);
+      
     }
   };
 
@@ -125,6 +147,12 @@ const StudentDataUpdationForm = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-lg">
         <h2 className="text-2xl font-bold mb-6 text-center">Update Student Data</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
+          <ConfirmationModal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            onConfirm={handleConfirm}
+            actionType={actionType}
+          />
           {/* Student ID (non-editable) */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Student ID</label>
@@ -145,9 +173,8 @@ const StudentDataUpdationForm = () => {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.fullName ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.fullName ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
           </div>
@@ -160,9 +187,8 @@ const StudentDataUpdationForm = () => {
               name="dob"
               value={formData.dob}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.dob ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.dob ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
           </div>
@@ -216,9 +242,8 @@ const StudentDataUpdationForm = () => {
               name="age"
               value={formData.age}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.age ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.age ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
           </div>
@@ -231,9 +256,8 @@ const StudentDataUpdationForm = () => {
               name="class"
               value={formData.class}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.class ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.class ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.class && <p className="text-red-500 text-sm mt-1">{errors.class}</p>}
           </div>
@@ -246,9 +270,8 @@ const StudentDataUpdationForm = () => {
               name="division"
               value={formData.division}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.division ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.division ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.division && <p className="text-red-500 text-sm mt-1">{errors.division}</p>}
           </div>
@@ -261,9 +284,8 @@ const StudentDataUpdationForm = () => {
               name="street"
               value={formData.address.street}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.street ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.street ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.street && <p className="text-red-500 text-sm mt-1">{errors.street}</p>}
           </div>
@@ -275,9 +297,8 @@ const StudentDataUpdationForm = () => {
               name="city"
               value={formData.address.city}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.city ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.city ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
           </div>
@@ -289,9 +310,8 @@ const StudentDataUpdationForm = () => {
               name="state"
               value={formData.address.state}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.state ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.state ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
           </div>
@@ -303,9 +323,8 @@ const StudentDataUpdationForm = () => {
               name="postalCode"
               value={formData.address.postalCode}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.postalCode ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.postalCode ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.postalCode && <p className="text-red-500 text-sm mt-1">{errors.postalCode}</p>}
           </div>
