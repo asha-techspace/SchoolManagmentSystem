@@ -29,7 +29,7 @@ const StatsCards = () => {
           <UserGroupIcon className="w-6 h-6 sm:w-8 sm:h-8" />
         </div>
         <div>
-          <h2 className="text-xs sm:text-sm font-semibold text-gray-500">Total Teachers</h2>
+          <h2 className="text-xs sm:text-sm font-semibold text-gray-500">Total Staffs</h2>
           <p className="text-xl sm:text-2xl font-bold text-gray-900">150</p>
         </div>
       </div>
