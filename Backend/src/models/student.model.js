@@ -1,12 +1,14 @@
 import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 const feeTransactionSchema = new mongoose.Schema({
   date: {type:Date, required:true, default:Date.now},
+  feesType : {type:String, enum: ['tutiton','hostel', 'pta','activities','miscellaneous'], required: true},
   amountpaid: {type:Number, required:true},
 })
 
 const libraryHistorySchema = new mongoose.Schema({
-      id: {type:Number, required:true},
+      bookId: {type:String},
       title: {type:String, required:true},
       author: {type:String, required:true},
       issueDate: {type:Date, required:true,default:Date.now},
@@ -28,14 +30,12 @@ const studentSchema = new mongoose.Schema({
     state : {type: String},
     postalCode : {type: String},
   },
-  feesHistory: [
-    {
-      totalFees: {type:Number},
-      feesType : {type:String, enum: ['tutiton','hostel', 'pta','activities','miscellaneous'], required: true},
-      transactions: [feeTransactionSchema],
-      dueDate: {type:Date},
-    },
-  ],
+  fees : [{
+    feesType : {type:String, enum: ['tutiton','hostel', 'pta','activities','miscellaneous']},
+    dueDate: {type:Date},
+    totalAmount: {type:Number},
+  }],
+  feesHistory: [feeTransactionSchema],
   libraryHistory: [libraryHistorySchema],
 });
 

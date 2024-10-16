@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password : {type:String, required: true},
   role: { type: String, enum: ['Admin', 'OfficeStaff', 'Librarian'], default: 'OfficeStaff' },
-  staffId: {type:String, unique: true},
+  id: {type:String, unique: true},
   dob : {type:Date, required:true},
   gender : {type:String, enum: ['male','female','other'], required: true},
   privileges: [{ type: String }],
@@ -22,10 +22,10 @@ const userSchema = new mongoose.Schema({
 });
 
 // Hash password before saving
-// userSchema.pre('save', async function (next) {
-//   if (!this.isModified('password')) return next();
-//   this.password = await bcrypt.hash(this.password, 10);
-//   next();
-// });
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 
 export default mongoose.model('User', userSchema);

@@ -1,35 +1,42 @@
 import UserModel from '../../models/user.model.js';
 import bcrypt from 'bcryptjs';
+import {generateToken} from '../../utils/generateToken.js'
+
+
+const cookieOptions = {
+    httpOnly: false, 
+    secure: false,      // Set to true in production with HTTPS
+    sameSite: "lax",  
+    maxAge: 24 * 60 * 60 * 1000
+};
+
 
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-
+        
+        //if either email/password is not present return error(400)
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
                 message: 'All fields are required'
             });
         }
+
+        //Fetch user by email and verify credentials - return 401 if not matching
         const user = await UserModel.findOne({ email });
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        const token = generateToken(user._id);
+        //user authenticated, now generate jwt token
+        const token = generateToken(user.id);
 
-        const userWithoutPassword = await UserModel.findById(user._id).select('-password');
-        userWithoutPassword.isActive = true;
-        await userWithoutPassword.save();
-
-        const myProfile = await ProfileModel.findOne({user: user._id})
-        console.log(myProfile);
-        
-
+        //send OK response including token and user in cookie
+        const userWithoutPassword = await UserModel.findOne({ id: user.id }).select('-password');
         res.status(200)
             .cookie("token", token, cookieOptions)
             .cookie("user", {...userWithoutPassword, "isAuthenticated" : true}, cookieOptions)
-            .cookie("myProfile", myProfile, cookieOptions)
             .json({
                 success: true,
                 message: 'Login Successfully!',
