@@ -12,7 +12,7 @@ const StudentDataUpdationForm = () => {
   console.log("Id received at student edit page:",id)
   const location = useLocation();
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   let {student} = location.state || {}
   if (student !== null && typeof student === 'object' && student.hasOwnProperty('dob')){
       student.dob = new Date(student.dob).toISOString().split('T')[0];

@@ -90,8 +90,8 @@ const StudentList = () => {
     setCurrentPage(1); // Reset to first page after search
   };
 
-  const handleView = (studentId) => {
-    navigate(`/studentDetails/${studentId}`);
+  const handleView = (student) => {
+    navigate(`/studentDetails/${student.studentId}`,{state:{student:student}});
   };
 
   const handleEdit = (student) => {
@@ -184,7 +184,7 @@ const StudentList = () => {
                   />
                   <div className="flex flex-col sm:flex-row sm:justify-center gap-2 sm:gap-3">
                     <button
-                      onClick={() => handleView(student.studentId)}
+                      onClick={() => handleView(student)}
                       className="bg-deep-red text-white text-xs sm:text-sm lg:text-base px-2 py-1 sm:px-3 sm:py-2 lg:px-4 lg:py-2 rounded hover:bg-red-700"
                     >
                       View
