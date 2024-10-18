@@ -25,7 +25,7 @@ router.route("/:id").delete(verifyUser,authorizeRoles('Admin','OfficeStaff'),del
 
 // Library History CRUD routes
 
-router.route('/:studentId/library')
+router.route('/library/:studentId')
   .post(verifyUser,authorizeRoles('Admin','Librarian'),addLibraryEntry);
 
 router.route('/:studentId/library/:transId')

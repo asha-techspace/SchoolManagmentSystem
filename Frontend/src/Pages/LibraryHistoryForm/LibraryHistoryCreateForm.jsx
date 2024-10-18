@@ -1,14 +1,16 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const LibraryHistoryForm = () => {
   // Form data and error states
   const [formData, setFormData] = useState({
     student_id: "",
-    book_id: "",
+    bookId: "",
     title: "",
     author: "",
     dueDate: "",
-    returnedDate: "",
+    issueDate: "",
     status: "",
   });
 
@@ -27,8 +29,8 @@ const LibraryHistoryForm = () => {
       validationErrors.student_id = "Student ID is required";
     }
 
-    if (!formData.book_id) {
-      validationErrors.book_id = "Book ID is required";
+    if (!formData.bookId) {
+      validationErrors.bookId = "Book ID is required";
     }
 
     if (!formData.title.trim()) {
@@ -43,8 +45,8 @@ const LibraryHistoryForm = () => {
       validationErrors.dueDate = "Due Date is required";
     }
 
-    if (formData.status === "returned" && !formData.returnedDate) {
-      validationErrors.returnedDate = "Returned Date is required when status is 'returned'";
+    if (formData.status === "returned" && !formData.issueDate) {
+      validationErrors.issueDate = "Returned Date is required when status is 'returned'";
     }
 
     if (!formData.status) {
@@ -53,6 +55,21 @@ const LibraryHistoryForm = () => {
 
     return validationErrors;
   };
+
+  const addLibRecord = async (record) => {
+    try {
+      let id=record.student_id;
+      let payload = record;
+      delete payload.student_id;
+      console.log(`Payload:: ${JSON.stringify(payload)}`)
+      const response = await axios.post(`http://127.0.0.1:5000/api/students/library/${id}`, payload,{ withCredentials:true });
+      console.log(`add Library response:: ${JSON.stringify(response)}`)
+      const data = response.data.message;
+    } catch (err) {
+      console.log(err)
+    }
+  };
+
 
   // Handle form submission
   const handleSubmit = (e) => {
@@ -63,14 +80,15 @@ const LibraryHistoryForm = () => {
 
     if (Object.keys(validationErrors).length === 0) {
       console.log("Library history data: ", formData);
-      alert("Form Submitted Successfully!");
+      addLibRecord(formData);
+      // alert("Form Submitted Successfully!");
       setFormData({
         student_id: "",
-        book_id: "",
+        bookId: "",
         title: "",
         author: "",
         dueDate: "",
-        returnedDate: "",
+        issueDate: "",
         status: "",
       }); // Reset form after successful submission
     }
@@ -88,7 +106,7 @@ const LibraryHistoryForm = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700">Student ID</label>
             <input
-              type="number"
+              type="text"
               name="student_id"
               value={formData.student_id}
               onChange={handleChange}
@@ -103,15 +121,15 @@ const LibraryHistoryForm = () => {
             <div>
             <label className="block text-sm font-medium text-gray-700">Book ID</label>
             <input
-              type="number"
-              name="book_id"
-              value={formData.book_id}
+              type="text"
+              name="bookId"
+              value={formData.bookId}
               onChange={handleChange}
               className={`mt-1 block w-full p-2 border ${
-                errors.book_id ? "border-red-500" : "border-gray-300"
+                errors.bookId ? "border-red-500" : "border-gray-300"
               } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.book_id && <p className="text-red-500 text-sm mt-1">{errors.book_id}</p>}
+            {errors.bookId && <p className="text-red-500 text-sm mt-1">{errors.bookId}</p>}
           </div>
           {/* Title */}
           <div>
@@ -160,17 +178,17 @@ const LibraryHistoryForm = () => {
 
           {/* Returned Date */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">Returned Date</label>
+            <label className="block text-sm font-medium text-gray-700">issue Date</label>
             <input
               type="date"
-              name="returnedDate"
-              value={formData.returnedDate}
+              name="issueDate"
+              value={formData.issueDate}
               onChange={handleChange}
               className={`mt-1 block w-full p-2 border ${
-                errors.returnedDate ? "border-red-500" : "border-gray-300"
+                errors.issueDate ? "border-red-500" : "border-gray-300"
               } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.returnedDate && <p className="text-red-500 text-sm mt-1">{errors.returnedDate}</p>}
+            {errors.issueDate && <p className="text-red-500 text-sm mt-1">{errors.issueDate}</p>}
           </div>
 
           {/* Status */}

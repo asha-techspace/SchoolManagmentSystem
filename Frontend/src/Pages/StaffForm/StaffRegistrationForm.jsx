@@ -1,12 +1,19 @@
 import React, { useState } from "react";
+import {addStaff,fetchStaffsFailure,} from '../../redux/staffSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const StaffRegistrationForm = () => {
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   // Form data and error states
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    staffId: "",
     role: "",
     gender: "",
     dob: "",
@@ -53,10 +60,6 @@ const StaffRegistrationForm = () => {
       validationErrors.password = "Password is required";
     }
 
-    if (!formData.staffId.trim()) {
-      validationErrors.staffId = "Staff ID is required";
-    }
-
     if (!formData.role) {
       validationErrors.role = "Role is required";
     }
@@ -96,6 +99,18 @@ const StaffRegistrationForm = () => {
     return validationErrors;
   };
 
+  const addStaffs = async (staff) => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/users', staff, { withCredentials: true });
+      console.log(`add staff response:: ${JSON.stringify(response)}`)
+      const data = response.data.message;
+      dispatch(addStaff(data));
+    } catch (err) {
+      dispatch(fetchStaffsFailure(err.message));
+      console.log(err)
+    }
+  };
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -106,11 +121,13 @@ const StaffRegistrationForm = () => {
     if (Object.keys(validationErrors).length === 0) {
       console.log("Staff data: ", formData);
       alert("Staff Registered Successfully!");
+
+      addStaffs(formData);
+
       setFormData({
         name: "",
         email: "",
         password: "",
-        staffId: "",
         role: "",
         gender: "",
         dob: "",
@@ -119,6 +136,7 @@ const StaffRegistrationForm = () => {
         joiningDate: "",
         address: { street: "", city: "", state: "", postalCode: "" },
       }); // Reset form after successful submission
+      navigate('/staffList');
     }
   };
 
@@ -173,20 +191,6 @@ const StaffRegistrationForm = () => {
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
           </div>
 
-          {/* Staff ID */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Staff ID</label>
-            <input
-              type="text"
-              name="staffId"
-              value={formData.staffId}
-              onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.staffId ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-            />
-            {errors.staffId && <p className="text-red-500 text-sm mt-1">{errors.staffId}</p>}
-          </div>
 
           {/* Role */}
           <div>

@@ -9,7 +9,7 @@ import axios from 'axios';
 
 const StudentDataUpdationForm = () => {
   const { id } = useParams(); // Get the student ID from the URL
-  console.log("Id received at student edit page:",id)
+  // console.log("Id received at student edit page:",id)
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -33,7 +33,6 @@ const StudentDataUpdationForm = () => {
       student = formData;
       alert("Student data Updated!!")
       navigate("/studentsList")
-      console.log("here")
     }
   };
   

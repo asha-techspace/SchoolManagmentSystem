@@ -1,6 +1,7 @@
 import User from '../../models/user.model.js';
 import bcrypt from 'bcryptjs';
-import {generateToken} from '../../utils/generateToken.js'
+import {generateToken} from '../../utils/generateToken.js';
+import Counter from '../../models/counter.model.js';
 
 export const addUser = async (req, res) => {
     try {

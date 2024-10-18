@@ -5,8 +5,9 @@ import { Navigate  } from 'react-router-dom';
 // HOC to protect routes based on user role
 const RoleProtectedRoute = ({ element, roles }) => {
     const { userInfo } = useSelector((state) => state.auth);
-    console.log(`userInfo:: ${userInfo}`)
+    console.log(`userInfo:: ${JSON.stringify(userInfo)}`)
     console.log(`element:: ${element}`)
+    console.log(`roles:: ${roles}`)
 
     if (!userInfo) {
         return <Navigate to="/" />;

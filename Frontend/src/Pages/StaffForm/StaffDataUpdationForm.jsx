@@ -1,32 +1,61 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ConfirmationModal from '../../Components/ConfirmationModal/ConfirmationModal '
+import { addStaff, fetchStaffsFailure, } from '../../redux/staffSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const StaffDataUpdationForm = () => {
-  const { staffId } = useParams(); // Get staffId from the URL or route params
+  const { id } = useParams(); // Get id from the URL or route params
 
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentRecord, setCurrentRecord] = useState(null);
   const [actionType, setActionType] = useState(""); // 'Edit' or 'Delete'
 
-  
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  let { staff } = location.state || {}
+  if (staff !== null && typeof staff === 'object' && staff.hasOwnProperty('dob')) {
+    staff.dob = new Date(staff.dob).toISOString().split('T')[0];
+    console.log("staff.dob", staff.dob)
+  }
+
+  const addStaffs = async (staff) => {
+    try {
+      const response = await axios.put(`http://localhost:5000/api/users/${staff.id}`, staff, { withCredentials: true });
+      console.log(`add staff response:: ${JSON.stringify(response)}`)
+      const data = response.data.message;
+      dispatch(addStaff(data));
+    } catch (err) {
+      dispatch(fetchStaffsFailure(err.message));
+      console.log(err)
+    }
+  };
+
   const handleConfirm = () => {
     if (actionType === "Delete") {
       // Call your delete function, e.g., deleteLibraryHistory(currentRecord.id);
     } else if (actionType === "Edit") {
-      // Call your edit function, e.g., editLibraryHistory(currentRecord.id);
+      setModalOpen(false);
+      addStaffs(formData);
+      staff = formData;
+      alert("Staff data Updated!!")
+      navigate("/staffList")
     }
-    setModalOpen(false);
   };
-  
+
   const closeModal = () => {
+    setFormData(staff)
     setModalOpen(false);
     setCurrentRecord(null);
   };
 
   // Initial form data (mock data for now, replace with fetched data from backend)
   const [formData, setFormData] = useState({
-    staffId: "", // Non-editable field
+    id: "", // Non-editable field
     name: "",
     email: "",
     password: "",
@@ -48,27 +77,9 @@ const StaffDataUpdationForm = () => {
 
   // Simulate fetching staff data (replace with API call)
   useEffect(() => {
-    const mockStaffData = {
-      staffId: staffId, // Non-editable
-      name: "Alice Johnson",
-      email: "alice@example.com",
-      password: "password123",
-      role: "Librarian",
-      gender: "female",
-      dob: "1985-07-20",
-      experience: "10 years",
-      qualification: "MLIS",
-      joiningDate: "2020-01-15",
-      address: {
-        street: "123 Elm St",
-        city: "Cityville",
-        state: "Stateville",
-        postalCode: "12345",
-      },
-    };
 
-    setFormData(mockStaffData);
-  }, [staffId]);
+    setFormData(staff);
+  }, [id]);
 
   // Handle input change
   const handleChange = (e) => {
@@ -159,7 +170,7 @@ const StaffDataUpdationForm = () => {
       <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Staff Data Updation Form</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
-        <ConfirmationModal
+          <ConfirmationModal
             isOpen={isModalOpen}
             onClose={closeModal}
             onConfirm={handleConfirm}
@@ -170,8 +181,8 @@ const StaffDataUpdationForm = () => {
             <label className="block text-sm font-medium text-gray-700">Staff ID</label>
             <input
               type="text"
-              name="staffId"
-              value={formData.staffId}
+              name="id"
+              value={formData.id}
               readOnly
               className="mt-1 block w-full p-2 border border-gray-300 bg-gray-100 rounded-md shadow-sm cursor-not-allowed"
             />
@@ -185,9 +196,8 @@ const StaffDataUpdationForm = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.name ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.name ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
           </div>
@@ -200,9 +210,8 @@ const StaffDataUpdationForm = () => {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.email ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.email ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
           </div>
@@ -215,9 +224,8 @@ const StaffDataUpdationForm = () => {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.password ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.password ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
           </div>
@@ -229,9 +237,8 @@ const StaffDataUpdationForm = () => {
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.role ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.role ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             >
               <option value="">Select Role</option>
               <option value="Admin">Admin</option>
@@ -248,9 +255,8 @@ const StaffDataUpdationForm = () => {
               name="gender"
               value={formData.gender}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.gender ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.gender ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
@@ -268,138 +274,130 @@ const StaffDataUpdationForm = () => {
               name="dob"
               value={formData.dob}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${
-                errors.dob ? "border-red-500" : "border-gray-300"
-              } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.dob ? "border-red-500" : "border-gray-300"
+                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
             {errors.dob && <p className="text-red-500 text-sm mt-1">{errors.dob}</p>}
           </div>
 
-                      {/* Experience */}
-                      <div>
-              <label className="block text-sm font-medium text-gray-700">Experience</label>
-              <input
-                type="text"
-                name="experience"
-                value={formData.experience}
-                onChange={handleChange}
-                className={`mt-1 block w-full p-2 border ${
-                  errors.experience ? "border-red-500" : "border-gray-300"
+          {/* Experience */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Experience</label>
+            <input
+              type="text"
+              name="experience"
+              value={formData.experience}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${errors.experience ? "border-red-500" : "border-gray-300"
                 } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-              />
-              {errors.experience && (
-                <p className="text-red-500 text-sm mt-1">{errors.experience}</p>
-              )}
-            </div>
+            />
+            {errors.experience && (
+              <p className="text-red-500 text-sm mt-1">{errors.experience}</p>
+            )}
+          </div>
 
-            {/* Qualification */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Qualification</label>
-              <input
-                type="text"
-                name="qualification"
-                value={formData.qualification}
-                onChange={handleChange}
-                className={`mt-1 block w-full p-2 border ${
-                  errors.qualification ? "border-red-500" : "border-gray-300"
+          {/* Qualification */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Qualification</label>
+            <input
+              type="text"
+              name="qualification"
+              value={formData.qualification}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${errors.qualification ? "border-red-500" : "border-gray-300"
                 } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-              />
-              {errors.qualification && (
-                <p className="text-red-500 text-sm mt-1">{errors.qualification}</p>
-              )}
-            </div>
+            />
+            {errors.qualification && (
+              <p className="text-red-500 text-sm mt-1">{errors.qualification}</p>
+            )}
+          </div>
 
-            {/* Joining Date */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Joining Date</label>
-              <input
-                type="date"
-                name="joiningDate"
-                value={formData.joiningDate}
-                onChange={handleChange}
-                className={`mt-1 block w-full p-2 border ${
-                  errors.joiningDate ? "border-red-500" : "border-gray-300"
+          {/* Joining Date */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Joining Date</label>
+            <input
+              type="date"
+              name="joiningDate"
+              value={formData.joiningDate}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${errors.joiningDate ? "border-red-500" : "border-gray-300"
                 } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-              />
-              {errors.joiningDate && (
-                <p className="text-red-500 text-sm mt-1">{errors.joiningDate}</p>
-              )}
-            </div>
+            />
+            {errors.joiningDate && (
+              <p className="text-red-500 text-sm mt-1">{errors.joiningDate}</p>
+            )}
+          </div>
 
-            {/* Address Section */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Street</label>
-              <input
-                type="text"
-                name="street"
-                value={formData.address.street}
-                onChange={handleChange}
-                className={`mt-1 block w-full p-2 border ${
-                  errors.street ? "border-red-500" : "border-gray-300"
+          {/* Address Section */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Street</label>
+            <input
+              type="text"
+              name="street"
+              value={formData.address.street}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${errors.street ? "border-red-500" : "border-gray-300"
                 } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-              />
-              {errors.street && (
-                <p className="text-red-500 text-sm mt-1">{errors.street}</p>
-              )}
-            </div>
+            />
+            {errors.street && (
+              <p className="text-red-500 text-sm mt-1">{errors.street}</p>
+            )}
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">City</label>
-              <input
-                type="text"
-                name="city"
-                value={formData.address.city}
-                onChange={handleChange}
-                className={`mt-1 block w-full p-2 border ${
-                  errors.city ? "border-red-500" : "border-gray-300"
+          <div>
+            <label className="block text-sm font-medium text-gray-700">City</label>
+            <input
+              type="text"
+              name="city"
+              value={formData.address.city}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${errors.city ? "border-red-500" : "border-gray-300"
                 } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-              />
-              {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
-            </div>
+            />
+            {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">State</label>
-              <input
-                type="text"
-                name="state"
-                value={formData.address.state}
-                onChange={handleChange}
-                className={`mt-1 block w-full p-2 border ${
-                  errors.state ? "border-red-500" : "border-gray-300"
+          <div>
+            <label className="block text-sm font-medium text-gray-700">State</label>
+            <input
+              type="text"
+              name="state"
+              value={formData.address.state}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${errors.state ? "border-red-500" : "border-gray-300"
                 } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-              />
-              {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
-            </div>
+            />
+            {errors.state && <p className="text-red-500 text-sm mt-1">{errors.state}</p>}
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Postal Code</label>
-              <input
-                type="text"
-                name="postalCode"
-                value={formData.address.postalCode}
-                onChange={handleChange}
-                className={`mt-1 block w-full p-2 border ${
-                  errors.postalCode ? "border-red-500" : "border-gray-300"
+          <div>
+            <label className="block text-sm font-medium text-gray-700">Postal Code</label>
+            <input
+              type="text"
+              name="postalCode"
+              value={formData.address.postalCode}
+              onChange={handleChange}
+              className={`mt-1 block w-full p-2 border ${errors.postalCode ? "border-red-500" : "border-gray-300"
                 } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-              />
-              {errors.postalCode && (
-                <p className="text-red-500 text-sm mt-1">{errors.postalCode}</p>
-              )}
-            </div>
+            />
+            {errors.postalCode && (
+              <p className="text-red-500 text-sm mt-1">{errors.postalCode}</p>
+            )}
+          </div>
 
-            {/* Submit Button */}
-            <div className="text-center">
-              <button
-                type="submit"
-                className="bg-[#0a4275] text-white px-6 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
-              >
-                Update Staff Details
-              </button>
-            </div>
-          </form>
-        </div>
+          {/* Submit Button */}
+          <div className="text-center">
+            <button
+              type="submit"
+              className="bg-[#0a4275] text-white px-6 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
+            >
+              Update Staff Details
+            </button>
+          </div>
+        </form>
       </div>
-    );
-  };
+    </div>
+  );
+};
 
 export default StaffDataUpdationForm;

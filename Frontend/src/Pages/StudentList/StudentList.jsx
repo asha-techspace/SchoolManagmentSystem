@@ -72,14 +72,6 @@ const StudentList = () => {
   const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
   const studentsPerPage = 5; // Students to show per page
 
-  // Filter students based on the search term
-  // const filteredStudents = students.filter((student) =>
-  //   student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   student.class.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //   student.studentId.toString().includes(searchTerm) ||
-  //   student.division.toLowerCase().includes(searchTerm.toLowerCase())
-  // );
-
   // Calculate pagination
   const indexOfLastStudent = currentPage * studentsPerPage;
   const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;

@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const FeesRemarksCreateForm = () => {
   // Form data and error states
   const [formData, setFormData] = useState({
     studentId: "",
     feeType: "",
-
     paymentDate: "",
     remarks: "",
     date: new Date().toISOString().split("T")[0], // Default to current date
@@ -60,6 +61,20 @@ const FeesRemarksCreateForm = () => {
     }
 
     return validationErrors;
+  };
+
+  const addFeeRecord = async (record) => {
+    try {
+      let id = record.student_id;
+      let payload = record;
+      delete payload.student_id;
+      console.log(`Payload:: ${JSON.stringify(payload)}`)
+      const response = await axios.post(`http://127.0.0.1:5000/api/students/fees-history/${id}`, payload,{ withCredentials:true });
+      console.log(`add Library response:: ${JSON.stringify(response)}`)
+      const data = response.data.message;
+    } catch (err) {
+      console.log(err)
+    }
   };
 
   // Handle form submission

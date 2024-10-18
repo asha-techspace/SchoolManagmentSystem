@@ -1,57 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import ConfirmationModal from '../../Components/ConfirmationModal/ConfirmationModal ';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
+import {addStudent} from '../../redux/studentSlice';
+import axios from 'axios';
 
 const StaffDetails = () => {
-  const { staffId } = useParams(); // Get the staff ID from the URL
+  const { id } = useParams(); // Get the staff ID from the URL
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  // Mock student data (In a real app, this data would come from an API)
+  const [staff, setStaff] = useState(location.state.staff || {});
+  console.log("Staff for detail view", JSON.stringify(staff));
 
-  // Mock staff data (replace with actual API call in a real app)
-  const [staff, setStaff] = useState(null);
-
-  useEffect(() => {
-    const mockStaffData = [
-      {
-        staffId: 1,
-        name: "Alice Johnson",
-        email: "alice@example.com",
-        role: "Office Staff",
-        gender: "Female",
-        dob: "1985-07-20",
-        experience: "10 years",
-        qualification: "MBA",
-        joiningDate: "2022-05-15",
-        address: { street: "123 Main St", city: "Cityville", state: "Stateland", postalCode: "12345" },
-      },
-      {
-        staffId: 2,
-        name: "Bob Smith",
-        email: "bob@example.com",
-        role: "Librarian",
-        gender: "Male",
-        dob: "1990-05-25",
-        experience: "5 years",
-        qualification: "MLIS",
-        joiningDate: "2021-03-10",
-        address: { street: "456 Elm St", city: "Townsville", state: "Stateville", postalCode: "23456" },
-      },
-      {
-        staffId: 3,
-        name: "Catherine Williams",
-        email: "catherine@example.com",
-        role: "Office Staff",
-        gender: "Female",
-        dob: "1988-12-15",
-        experience: "8 years",
-        qualification: "B.Com",
-        joiningDate: "2019-08-12",
-        address: { street: "789 Maple Ave", city: "Metropolis", state: "Provinceland", postalCode: "34567" },
-      },
-    ];
-
-    const selectedStaff = mockStaffData.find((member) => member.staffId === parseInt(staffId));
-    if (selectedStaff) {
-      setStaff(selectedStaff);
-    }
-  }, [staffId]);
 
   if (!staff) {
     return <p>Loading...</p>;
@@ -64,7 +27,7 @@ const StaffDetails = () => {
         <div className="space-y-4">
           <div className="flex justify-between">
             <span className="font-medium">Staff ID:</span>
-            <span>{staff.staffId}</span>
+            <span>{staff.id}</span>
           </div>
           <div className="flex justify-between">
             <span className="font-medium">Name:</span>

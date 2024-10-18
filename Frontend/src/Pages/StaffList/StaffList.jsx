@@ -1,74 +1,98 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../../Components/ConfirmationModal/ConfirmationModal '
 import { Plus } from 'lucide-react';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchStaffsRequest,
+  fetchStaffsSuccess,
+  fetchStaffsFailure,
+  addStaff,
+  addStaffs,
+  updateStaff,
+  deleteStaff,
+} from '../../redux/staffSlice';
 
 const StaffList = () => {
 
+const dispatch = useDispatch();
 const [isModalOpen, setModalOpen] = useState(false);
 const [currentRecord, setCurrentRecord] = useState(null);
 const [actionType, setActionType] = useState(""); // 'Edit' or 'Delete'
+
+const { staffs, loading, error } = useSelector(state => state.staff);
+
+const fetchStaff = async () => {
+  dispatch(fetchStaffsRequest());
+  try {
+    const response = await axios.get('http://localhost:5000/api/users/', { withCredentials: true });
+    const data = response.data.users;
+    console.log("fetched user::",data)
+    dispatch(fetchStaffsSuccess(data));
+  } catch (err) {
+    dispatch(fetchStaffsFailure(err.message));
+    console.log(err)
+  }
+};
+
+
+useEffect(() => { 
+  fetchStaff();
+}, [dispatch]);
+
 
   const openDeleteModal = (staffId) => {
     setCurrentRecord(staffId);
     setActionType("Delete");
     setModalOpen(true);
-     setStaff(staff.filter((member) => member.staffId !== staffId))
+    //setStaff(staff.filter((member) => member.staffId !== staffId))
   };
   
-  const handleConfirm = () => {
+  const handleConfirm = async() => {
     if (actionType === "Delete") {
-      // Call your delete function, e.g., deleteLibraryHistory(currentRecord.id);
+      // Call your delete function, e.g., deleteLibraryHistory(currentRecord.studentId);
+      dispatch(addStaffs(staffs.filter((staff) => staff.id !== currentRecord)));
+      try {
+        const response = await axios.delete(`http://localhost:5000/api/users/${currentRecord}`, { withCredentials: true });
+      } catch (err) {
+        dispatch(fetchStaffsFailure(err.message));
+        console.log(err)
+      }
     } else if (actionType === "Edit") {
-      // Call your edit function, e.g., editLibraryHistory(currentRecord.id);
+      // Call your edit function, e.g., editLibraryHistory(currentRecord.studentId);
     }
     setModalOpen(false);
   };
-  
+
+
   const closeModal = () => {
     setModalOpen(false);
     setCurrentRecord(null);
   };
   const navigate = useNavigate();
   
-  // Mock data for staff members
-  const [staff, setStaff] = useState([
-    { staffId: 1, name: 'Alice Johnson', role: 'Office Staff' },
-    { staffId: 2, name: 'Bob Smith', role: 'Librarian' },
-    { staffId: 3, name: 'Catherine Williams', role: 'Office Staff' },
-    { staffId: 4, name: 'David Brown', role: 'Librarian' },
-    // Add more mock staff data as needed...
-  ]);
-
-  const [searchTerm, setSearchTerm] = useState(''); // Search term state
   const [currentPage, setCurrentPage] = useState(1); // Current page for pagination
   const staffPerPage = 10; // Staff members to show per page
-
-  // Filter staff based on the search term (search by staffId, name, or role)
-  const filteredStaff = staff.filter((member) =>
-    member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    member.staffId.toString().includes(searchTerm)
-  );
 
   // Pagination logic
   const indexOfLastStaff = currentPage * staffPerPage;
   const indexOfFirstStaff = indexOfLastStaff - staffPerPage;
-  const currentStaff = filteredStaff.slice(indexOfFirstStaff, indexOfLastStaff);
+  const currentStaff = staffs.slice(indexOfFirstStaff, indexOfLastStaff);
 
-  const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to the first page after search
-  };
+  // const handleSearchChange = (e) => {
+  //   setSearchTerm(e.target.value);
+  //   setCurrentPage(1); // Reset to the first page after search
+  // };
 
   // Handle the view action
-  const handleView = (staffId) => {
-    navigate(`/staffDetails/${staffId}`);
+  const handleView = (staff) => {
+    navigate(`/staffDetails/${staff.id}`,{state:{staff:staff}});
   };
 
   // Handle the edit action
-  const handleEdit = (staffId) => {
-    navigate(`/staffUpdateForm/${staffId}`);
+  const handleEdit = (staff) => {
+    navigate(`/staffUpdateForm/${staff.id}`,{state:{staff:staff}});
   };
 
   // Handle the delete action
@@ -87,19 +111,21 @@ const [actionType, setActionType] = useState(""); // 'Edit' or 'Delete'
   // Pagination change handler
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  if (loading) return <p>Loading...</p>;
+
   return (
     <div className="container mx-auto p-6">
   <h2 className="text-2xl font-semibold mb-6 text-center mt-10">Staff List</h2>
 
   {/* Search bar and Create button in the same row */}
   <div className="flex justify-between items-center mb-4">
-    <input
+    {/* <input
       type="text"
       placeholder="Search by Staff ID, Name, or Role"
       value={searchTerm}
       onChange={handleSearchChange}
       className="p-2 border rounded w-full sm:w-1/2 lg:w-1/3"
-    />
+    /> */}
     <button
       onClick={handleCreate}
       className="ml-4 bg-deep-blue text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center"
@@ -122,8 +148,8 @@ const [actionType, setActionType] = useState(""); // 'Edit' or 'Delete'
       <tbody>
         {currentStaff.length > 0 ? (
           currentStaff.map((member) => (
-            <tr key={member.staffId} className="border-t">
-              <td className="py-2 px-4 border">{member.staffId}</td>
+            <tr key={member.id} className="border-t">
+              <td className="py-2 px-4 border">{member.id}</td>
               <td className="py-2 px-4 border">{member.name}</td>
               <td className="py-2 px-4 border">{member.role}</td>
               <td className="py-2 px-4 border flex flex-col md:flex-row">
@@ -134,19 +160,19 @@ const [actionType, setActionType] = useState(""); // 'Edit' or 'Delete'
                   actionType={actionType}
                 />
                 <button
-                  onClick={() => handleView(member.staffId)}
+                  onClick={() => handleView(member)}
                   className="bg-deep-red text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-red-700"
                 >
                   View
                 </button>
                 <button
-                  onClick={() => handleEdit(member.staffId)}
+                  onClick={() => handleEdit(member)}
                   className="bg-deep-blue text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-blue-700"
                 >
                   Edit
                 </button>
                 <button
-                  onClick={() => openDeleteModal(member.staffId)}
+                  onClick={() => openDeleteModal(member.id)}
                   className="bg-deep-red text-white px-2 py-1 rounded mb-2 md:mb-0 hover:bg-red-700"
                 >
                   Delete
@@ -166,7 +192,7 @@ const [actionType, setActionType] = useState(""); // 'Edit' or 'Delete'
 
     {/* Pagination */}
     <div className="flex justify-center mt-4">
-      {[...Array(Math.ceil(filteredStaff.length / staffPerPage)).keys()].map((number) => (
+      {[...Array(Math.ceil(staffs.length / staffPerPage)).keys()].map((number) => (
         <button
           key={number}
           onClick={() => paginate(number + 1)}
