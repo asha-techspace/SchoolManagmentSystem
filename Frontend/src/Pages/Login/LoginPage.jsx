@@ -1,8 +1,15 @@
 // src/LoginPage.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Bounce, toast, ToastContainer } from 'react-toastify';
+import Cookies from 'js-cookie';
+import { useDispatch } from 'react-redux';
+import { login, logout } from '../../redux/authSlice'; // Import logout action
+import { Link, useNavigate } from 'react-router-dom';
 
 function LoginPage() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -21,44 +28,43 @@ function LoginPage() {
     if (validate()) {
       setLoading(true);
       try {
-        const res = await axios.post('http://localhost:5000/login', formData, { withCredentials: true });
-        
-        
+        const res = await axios.post('http://localhost:5000/api/auth/login', formData, { withCredentials: true });
+
+        console.log(res)
         setLoading(false);
         toast.success(res.data.message, {duration: 1000});
 
         const userCookie = Cookies.get('user');
         const token = Cookies.get('token');
-        const myProfileCookie = Cookies.get('myProfile');
-        console.log(token)
-        
-       if (userCookie && token) {
-            
-                const decodedUserCookie = decodeURIComponent(userCookie);
-                const cleanedUserJson = decodedUserCookie.startsWith('j:') ? decodedUserCookie.slice(2) : decodedUserCookie;
-                const user = JSON.parse(cleanedUserJson);
-                console.log(user);
-                
-                const decodedMyProfileCookie = decodeURIComponent(myProfileCookie);
-                const cleanedMyProfileJson = decodedMyProfileCookie.startsWith('j:') ? decodedMyProfileCookie.slice(2) : decodedMyProfileCookie;
-                const myProfile = JSON.parse(cleanedMyProfileJson);
-                console.log(myProfile);
+        console.log(`token::${token}`)
 
-                const payload = {
-                    userInfo: user._doc,
-                    myProfile,
-                    isAuthenticated: true,
-                    token
-                };
-                console.log(payload)
-                dispatch(login((payload)));
-                
-                navigate('/home');
-        } 
-    } catch (err) {
+        if (userCookie && token) {
+
+          const decodedUserCookie = decodeURIComponent(userCookie);
+          const cleanedUserJson = decodedUserCookie.startsWith('j:') ? decodedUserCookie.slice(2) : decodedUserCookie;
+          const user = JSON.parse(cleanedUserJson);
+          console.log(user);
+
+          const payload = {
+            userInfo: user._doc,
+            isAuthenticated: true,
+            token
+          };
+          console.log(payload);
+          dispatch(login((payload)));
+          
+          console.log(`User: ${user._doc.role}`);
+
+          (user._doc.role == 'Admin')?navigate('/adminDashboard'):
+          (user._doc.role == 'OfficeStaff')?navigate('/officeStaffDashboard'):
+          (user._doc.role == 'Librarian')?navigate('/librarianDashboard'):navigate('/');
+          
+        }
+      } catch (err) {
         setLoading(false);
         toast.error(err.response?.data?.message || 'An error occurred');
-    }
+        console.log(err)
+      }
       console.log("Form is valid");
     } else {
       console.log("Form has errors");

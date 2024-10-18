@@ -15,15 +15,23 @@ const studentSlice = createSlice({
       state.loading = true;
     },
     fetchStudentsSuccess(state, action) {
+      console.log(`Responseee$:: ${action.payload}`)
       state.students = action.payload;
       state.loading = false;
     },
     fetchStudentsFailure(state, action) {
+      state.students = []
       state.loading = false;
       state.error = action.payload;
     },
     addStudent(state, action) {
       state.students.push(action.payload);
+    },
+    addStudentAtStart(state, action) {
+      state.students.unshift(action.payload);
+    },
+    addStudents(state, action) {
+      state.students = action.payload;
     },
     updateStudent(state, action) {
       const index = state.students.findIndex(student => student.id === action.payload.id);
@@ -42,8 +50,10 @@ export const {
   fetchStudentsSuccess,
   fetchStudentsFailure,
   addStudent,
+  addStudents,
   updateStudent,
   deleteStudent,
-} = studentSlice.actions;
+  addStudentAtStart,
+ } = studentSlice.actions;
 
 export default studentSlice.reducer;

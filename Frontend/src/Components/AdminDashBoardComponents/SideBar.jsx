@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { HomeIcon, UsersIcon, CalendarIcon, BellIcon, CogIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
 import { Link, useNavigate } from 'react-router-dom';
+import {logout} from '../../redux/authSlice'
+import {useDispatch} from 'react-redux'
 import axios from 'axios'; 
 
 const SideBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-
+  const dispatch = useDispatch()
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
@@ -14,8 +16,9 @@ const SideBar = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/logout', null, { withCredentials: true });
+      const res = await axios.post('http://localhost:5000/api/auth/logout', null, { withCredentials: true });
       console.log(res.data.message);
+      dispatch(logout())
       navigate('/');
     } catch (err) {
       console.log(err);

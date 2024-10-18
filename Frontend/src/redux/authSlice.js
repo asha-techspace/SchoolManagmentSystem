@@ -1,36 +1,37 @@
-// src/redux/authSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
+// Initial state from sessionStorage or default values
 const initialState = {
-  isAuthenticated: false,
-  user: null,
-  loading: false,
-  error: null,
+    isAuthenticated: sessionStorage.getItem('isAuthenticated') === 'true',
+    userInfo: sessionStorage.getItem('userInfo') ? JSON.parse(sessionStorage.getItem('userInfo')) : null,
+    token: sessionStorage.getItem('token'),
 };
 
 const authSlice = createSlice({
-  name: 'auth',
-  initialState,
-  reducers: {
-    loginRequest(state) {
-      state.loading = true;
-    },
-    loginSuccess(state, action) {
-      state.isAuthenticated = true;
-      state.user = action.payload;
-      state.loading = false;
-    },
-    loginFailure(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-    },
-    logout(state) {
-      state.isAuthenticated = false;
-      state.user = null;
-    },
-  },
+    name: 'auth',
+    initialState,
+    reducers: {
+        login: (state, action) => {
+            console.log(action.payload)
+            const { isAuthenticated, userInfo, token } = action.payload;
+            sessionStorage.setItem('isAuthenticated', String(isAuthenticated));
+            sessionStorage.setItem('userInfo', JSON.stringify(userInfo));
+            sessionStorage.setItem('token', token);
+            state.isAuthenticated = isAuthenticated;
+            state.userInfo = userInfo;
+            state.token = token;
+        },
+        logout: (state) => {
+            sessionStorage.removeItem('isAuthenticated');
+            sessionStorage.removeItem('userInfo');
+            sessionStorage.removeItem('token');
+            state.isAuthenticated = false;
+            state.userInfo = null;
+            state.token = null;
+        }
+    }
 });
 
-export const { loginRequest, loginSuccess, loginFailure, logout } = authSlice.actions;
+export const { signup, login, logout } = authSlice.actions;
 
 export default authSlice.reducer;

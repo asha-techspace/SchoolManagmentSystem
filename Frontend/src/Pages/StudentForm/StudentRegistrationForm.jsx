@@ -1,11 +1,18 @@
 import React, { useState } from "react";
+import {addStudent,fetchStudentsFailure,} from '../../redux/studentSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const StudentRegistrationForm = () => {
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     dob: "",
     gender: "",
-    age: "",
     class: "",
     division: "",
     address: {
@@ -35,8 +42,8 @@ const StudentRegistrationForm = () => {
   const validate = () => {
     let validationErrors = {};
 
-    if (!formData.fullName.trim()) {
-      validationErrors.fullName = "Full Name is required";
+    if (!formData.name.trim()) {
+      validationErrors.name = "Full Name is required";
     }
 
     if (!formData.dob.trim()) {
@@ -44,12 +51,6 @@ const StudentRegistrationForm = () => {
     }
     if (!formData.gender.trim()) {
       validationErrors.gender = "Gender is required";
-    }
-
-    if (!formData.age) {
-      validationErrors.age = "Age is required";
-    } else if (formData.age < 5 || formData.age > 100) {
-      validationErrors.age = "Age must be between 5 and 100";
     }
 
     if (!formData.class.trim()) {
@@ -79,6 +80,18 @@ const StudentRegistrationForm = () => {
     return validationErrors;
   };
 
+  const addStudents = async (student) => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/students', student, { withCredentials: true });
+      console.log(`add student response:: ${JSON.stringify(response)}`)
+      const data = response.data.message;
+      dispatch(addStudent(data));
+    } catch (err) {
+      dispatch(fetchStudentsFailure(err.message));
+      console.log(err)
+    }
+  };
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -88,16 +101,19 @@ const StudentRegistrationForm = () => {
 
     if (Object.keys(validationErrors).length === 0) {
       console.log("Student data: ", formData);
-      alert("Form Submitted Successfully!");
+      
+      addStudents(formData);
+      
+      // alert("Form Submitted Successfully!");
       setFormData({
-        fullName: "",
+        name: "",
         dob: "",
         gender: "",
-        age: "",
         class: "",
         division: "",
         address: { street: "", city: "", state: "", postalCode: "" },
       });
+      navigate('/studentsList');
     }
   };
 
@@ -111,12 +127,12 @@ const StudentRegistrationForm = () => {
             <label className="block text-sm font-medium text-gray-700">Full Name</label>
             <input
               type="text"
-              name="fullName"
-              value={formData.fullName}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.fullName ? "border-red-500" : "border-gray-300"} rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
+              className={`mt-1 block w-full p-2 border ${errors.name ? "border-red-500" : "border-gray-300"} rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
+            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
           </div>
 
           {/* DOB */}
@@ -142,24 +158,11 @@ const StudentRegistrationForm = () => {
               className={`mt-1 block w-full p-2 border ${errors.gender ? "border-red-500" : "border-gray-300"} rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             >
               <option value="">Select Gender</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-              <option value="Other">Other</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
             </select>
             {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
-          </div>
-
-          {/* Age */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Age</label>
-            <input
-              type="number"
-              name="age"
-              value={formData.age}
-              onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.age ? "border-red-500" : "border-gray-300"} rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-            />
-            {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
           </div>
 
           {/* Class */}

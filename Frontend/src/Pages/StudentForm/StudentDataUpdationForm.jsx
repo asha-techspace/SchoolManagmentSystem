@@ -1,10 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import ConfirmationModal from '../../Components/ConfirmationModal/ConfirmationModal '
+import {addStudent,fetchStudentsFailure,} from '../../redux/studentSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useLocation  } from 'react-router-dom';
+import axios from 'axios';
+
 
 const StudentDataUpdationForm = () => {
   const { id } = useParams(); // Get the student ID from the URL
-
+  console.log("Id received at student edit page:",id)
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate()
+  let {student} = location.state || {}
+  if (student !== null && typeof student === 'object' && student.hasOwnProperty('dob')){
+      student.dob = new Date(student.dob).toISOString().split('T')[0];
+      console.log("student.dob", student.dob)}
+      student.class = String(student.class)
+  console.log("Student received at student edit page:",student)
   const [isModalOpen, setModalOpen] = useState(false);
   const [currentRecord, setCurrentRecord] = useState(null);
   const [actionType, setActionType] = useState(""); // 'Edit' or 'Delete'
@@ -14,23 +28,27 @@ const StudentDataUpdationForm = () => {
     if (actionType === "Delete") {
       // Call your delete function, e.g., deleteLibraryHistory(currentRecord.id);
     } else if (actionType === "Edit") {
-      // Call your edit function, e.g., editLibraryHistory(currentRecord.id);
+      setModalOpen(false);
+      addStudents(formData);
+      student = formData;
+      alert("Student data Updated!!")
+      navigate("/studentsList")
+      console.log("here")
     }
-    setModalOpen(false);
   };
   
   const closeModal = () => {
+    setFormData(student)
     setModalOpen(false);
     setCurrentRecord(null);
   };
 
   // Initial form state with the student's data
   const [formData, setFormData] = useState({
-    id: "",
-    fullName: "",
+    studentId: "",
+    name: "",
     dob: "",
     gender: "",
-    age: "",
     class: "",
     division: "",
     address: {
@@ -45,23 +63,22 @@ const StudentDataUpdationForm = () => {
 
   // Simulate fetching student data (replace with API call in real app)
   useEffect(() => {
-    const mockStudentData = {
-      id: id, // Use the ID from the URL
-      fullName: "John Doe",
-      dob: "2008-05-15",
-      gender: "Male",
-      age: 15,
-      class: "10",
-      division: "A",
-      address: {
-        street: "123 Main St",
-        city: "Cityville",
-        state: "Stateland",
-        postalCode: "12345",
-      },
-    };
+    // const mockStudentData = {
+    //   id: id, // Use the ID from the URL
+    //   name: "John Doe",
+    //   dob: "2008-05-15",
+    //   gender: "Male",
+    //   class: "10",
+    //   division: "A",
+    //   address: {
+    //     street: "123 Main St",
+    //     city: "Cityville",
+    //     state: "Stateland",
+    //     postalCode: "12345",
+    //   },
+    // };
 
-    setFormData(mockStudentData); // Load the data into the form state
+    setFormData(student); // Load the data into the form state
   }, [id]);
 
   // Handle input change
@@ -81,8 +98,8 @@ const StudentDataUpdationForm = () => {
   const validate = () => {
     let validationErrors = {};
 
-    if (!formData.fullName.trim()) {
-      validationErrors.fullName = "Full Name is required";
+    if (!formData.name.trim()) {
+      validationErrors.name = "Full Name is required";
     }
 
     if (!formData.dob.trim()) {
@@ -91,12 +108,6 @@ const StudentDataUpdationForm = () => {
 
     if (!formData.gender.trim()) {
       validationErrors.gender = "Gender is required";
-    }
-
-    if (!formData.age) {
-      validationErrors.age = "Age is required";
-    } else if (formData.age < 5 || formData.age > 100) {
-      validationErrors.age = "Age must be between 5 and 100";
     }
 
     if (!formData.class.trim()) {
@@ -126,6 +137,18 @@ const StudentDataUpdationForm = () => {
     return validationErrors;
   };
 
+  const addStudents = async (student) => {
+    try {
+      const response = await axios.put(`http://localhost:5000/api/students/${student.studentId}`, student, { withCredentials: true });
+      console.log(`add student response:: ${JSON.stringify(response)}`)
+      const data = response.data.message;
+      dispatch(addStudent(data));
+    } catch (err) {
+      dispatch(fetchStudentsFailure(err.message));
+      console.log(err)
+    }
+  };
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -134,10 +157,14 @@ const StudentDataUpdationForm = () => {
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      console.log("Updated Student Data: ", formData);
-      // Reset or redirect logic here
+      
       setActionType("Edit");
       setModalOpen(true);
+
+      // addStudents(formData);
+
+      console.log("Updated Student Data: ", formData);
+      // Reset or redirect logic here
       
     }
   };
@@ -159,7 +186,7 @@ const StudentDataUpdationForm = () => {
             <input
               type="text"
               name="id"
-              value={formData.id}
+              value={formData.studentId}
               readOnly
               className="mt-1 block w-full p-2 border border-gray-300 bg-gray-100 rounded-md shadow-sm cursor-not-allowed"
             />
@@ -170,13 +197,13 @@ const StudentDataUpdationForm = () => {
             <label className="block text-sm font-medium text-gray-700">Full Name</label>
             <input
               type="text"
-              name="fullName"
-              value={formData.fullName}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.fullName ? "border-red-500" : "border-gray-300"
+              className={`mt-1 block w-full p-2 border ${errors.name ? "border-red-500" : "border-gray-300"
                 } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
+            {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
           </div>
 
           {/* DOB */}
@@ -201,8 +228,8 @@ const StudentDataUpdationForm = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="Male"
-                  checked={formData.gender === "Male"}
+                  value="male"
+                  checked={formData.gender === "male"}
                   onChange={handleChange}
                   className="mr-2"
                 />
@@ -212,8 +239,8 @@ const StudentDataUpdationForm = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="Female"
-                  checked={formData.gender === "Female"}
+                  value="female"
+                  checked={formData.gender === "female"}
                   onChange={handleChange}
                   className="mr-2"
                 />
@@ -223,8 +250,8 @@ const StudentDataUpdationForm = () => {
                 <input
                   type="radio"
                   name="gender"
-                  value="Other"
-                  checked={formData.gender === "Other"}
+                  value="other"
+                  checked={formData.gender === "other"}
                   onChange={handleChange}
                   className="mr-2"
                 />
@@ -232,20 +259,6 @@ const StudentDataUpdationForm = () => {
               </div>
             </div>
             {errors.gender && <p className="text-red-500 text-sm mt-1">{errors.gender}</p>}
-          </div>
-
-          {/* Age */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Age</label>
-            <input
-              type="number"
-              name="age"
-              value={formData.age}
-              onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.age ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-            />
-            {errors.age && <p className="text-red-500 text-sm mt-1">{errors.age}</p>}
           </div>
 
           {/* Class */}

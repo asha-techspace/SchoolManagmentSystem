@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../../Components/ConfirmationModal/ConfirmationModal '
+import { Plus } from 'lucide-react';
 
 const StaffList = () => {
 
@@ -88,87 +89,98 @@ const [actionType, setActionType] = useState(""); // 'Edit' or 'Delete'
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-semibold mb-6 text-center mt-10">Staff List</h2>
+  <h2 className="text-2xl font-semibold mb-6 text-center mt-10">Staff List</h2>
 
-      {/* Search bar */}
-      <input
-        type="text"
-        placeholder="Search by Staff ID, Name, or Role"
-        value={searchTerm}
-        onChange={handleSearchChange}
-        className="mb-4 p-2 border rounded w-full sm:w-1/2 lg:w-1/3 mx-auto"
-      />
+  {/* Search bar and Create button in the same row */}
+  <div className="flex justify-between items-center mb-4">
+    <input
+      type="text"
+      placeholder="Search by Staff ID, Name, or Role"
+      value={searchTerm}
+      onChange={handleSearchChange}
+      className="p-2 border rounded w-full sm:w-1/2 lg:w-1/3"
+    />
+    <button
+      onClick={handleCreate}
+      className="ml-4 bg-deep-blue text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center"
+    >
+        <Plus className="w-5 h-5 mr-2" /> {/* Icon */}
+      Create Staff
+    </button>
+  </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-300 rounded-lg">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="py-2 px-4 border">Staff ID</th>
-              <th className="py-2 px-4 border">Name</th>
-              <th className="py-2 px-4 border">Role</th>
-              <th className="py-2 px-4 border">Actions</th>
+  <div className="overflow-x-auto">
+    <table className="min-w-full bg-white border border-gray-300 rounded-lg">
+      <thead>
+        <tr className="bg-gray-100">
+          <th className="py-2 px-4 border">Staff ID</th>
+          <th className="py-2 px-4 border">Name</th>
+          <th className="py-2 px-4 border">Role</th>
+          <th className="py-2 px-4 border">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {currentStaff.length > 0 ? (
+          currentStaff.map((member) => (
+            <tr key={member.staffId} className="border-t">
+              <td className="py-2 px-4 border">{member.staffId}</td>
+              <td className="py-2 px-4 border">{member.name}</td>
+              <td className="py-2 px-4 border">{member.role}</td>
+              <td className="py-2 px-4 border flex flex-col md:flex-row">
+                <ConfirmationModal
+                  isOpen={isModalOpen}
+                  onClose={closeModal}
+                  onConfirm={handleConfirm}
+                  actionType={actionType}
+                />
+                <button
+                  onClick={() => handleView(member.staffId)}
+                  className="bg-deep-red text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-red-700"
+                >
+                  View
+                </button>
+                <button
+                  onClick={() => handleEdit(member.staffId)}
+                  className="bg-deep-blue text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-blue-700"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => openDeleteModal(member.staffId)}
+                  className="bg-deep-red text-white px-2 py-1 rounded mb-2 md:mb-0 hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {currentStaff.length > 0 ? (
-              currentStaff.map((member) => (
-                <tr key={member.staffId} className="border-t">
-                  <td className="py-2 px-4 border">{member.staffId}</td>
-                  <td className="py-2 px-4 border">{member.name}</td>
-                  <td className="py-2 px-4 border">{member.role}</td>
-                  <td className="py-2 px-4 border flex flex-col md:flex-row">
-                  <ConfirmationModal
-  isOpen={isModalOpen}
-  onClose={closeModal}
-  onConfirm={handleConfirm}
-  actionType={actionType}
-/>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="4" className="text-center py-4">
+              No staff members found.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
 
-                    <button
-                      onClick={() => handleView(member.staffId)}
-                      className="bg-deep-red text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-red-700"
-                    >
-                      View
-                    </button>
-                    <button
-                      onClick={() => handleEdit(member.staffId)}
-                      className="bg-deep-blue text-white px-2 py-1 rounded mr-2 mb-2 md:mb-0 hover:bg-blue-700"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => openDeleteModal(member.staffId)}
-                      className="bg-deep-red text-white px-2 py-1 rounded mb-2 md:mb-0 hover:bg-red-700"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="text-center py-4">
-                  No staff members found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-
-        {/* Pagination */}
-        <div className="flex justify-center mt-4">
-          {[...Array(Math.ceil(filteredStaff.length / staffPerPage)).keys()].map((number) => (
-            <button
-              key={number}
-              onClick={() => paginate(number + 1)}
-              className={`mx-1 px-3 py-1 rounded ${currentPage === number + 1 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800'}`}
-            >
-              {number + 1}
-            </button>
-          ))}
-        </div>
-      </div>
+    {/* Pagination */}
+    <div className="flex justify-center mt-4">
+      {[...Array(Math.ceil(filteredStaff.length / staffPerPage)).keys()].map((number) => (
+        <button
+          key={number}
+          onClick={() => paginate(number + 1)}
+          className={`mx-1 px-3 py-1 rounded ${
+            currentPage === number + 1 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800'
+          }`}
+        >
+          {number + 1}
+        </button>
+      ))}
     </div>
+  </div>
+</div>
+
   );
 };
 
