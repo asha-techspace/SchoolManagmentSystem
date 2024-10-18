@@ -6,7 +6,17 @@ export const addUser = async (req, res) => {
     try {
         const user = new User(req.body);
         console.log(user)
+
+        const latestEmpCounter = await Counter.findOne({ name : "empId" })
+        let empId = 'E' + (parseInt(latestEmpCounter.seq.substring(1))+1).toString().padStart(5, '0');
+        console.log(empId)
+        user.id = empId
+
         user.save()
+
+        latestEmpCounter.seq = empId;
+        latestEmpCounter.save()
+
         res.status(200).json({ message: user });
 
     } catch (error) {

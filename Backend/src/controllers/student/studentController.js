@@ -1,4 +1,5 @@
 import Student from '../../models/student.model.js';
+import Counter from '../../models/counter.model.js';
 import bcrypt from 'bcryptjs';
 import {generateToken} from '../../utils/generateToken.js'
 
@@ -6,7 +7,17 @@ export const addStudent = async (req, res) => {
     try {
         const student = new Student(req.body);
         console.log(student)
+
+        const latestStudentCounter = await Counter.findOne({ name : "studentId" })
+        let studentId = 'S' + (parseInt(latestStudentCounter.seq.substring(1))+1).toString().padStart(5, '0');
+        console.log(studentId)
+        student.studentId = studentId
+
         student.save()
+
+        latestStudentCounter.seq = studentId;
+        latestStudentCounter.save()
+
         res.status(200).json({ message: student });
 
     } catch (error) {

@@ -14,7 +14,7 @@ const cookieOptions = {
 export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
-        
+        console.log(`${email}, ${password}`)
         //if either email/password is not present return error(400)
         if (!email || !password) {
             return res.status(400).json({
@@ -28,6 +28,8 @@ export const loginUser = async (req, res) => {
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
+
+        console.log(`${user}`)
 
         //user authenticated, now generate jwt token
         const token = generateToken(user.id);
@@ -57,7 +59,7 @@ export const loginSuccess = async (req, res) => {
 
   export const logout = async (req, res) => {
     try {
-        console.log(req.user)
+        console.log(`USER::${req.user}`)
         const user = await UserModel.findById(req?.user?._id);
         if (!user) {
             return res.status(404).json({

@@ -13,7 +13,8 @@ export const verifyUser = async(req, res, next) => {
             });
         };
         const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY);
-        const user = await UserModel.findById(decodedToken?.id);
+        console.log(decodedToken)
+        const user = await UserModel.findOne({id : decodedToken?.id}); //{ id: user.id }
         if(!user) {
             return res.status(404).json({
                 success: false,

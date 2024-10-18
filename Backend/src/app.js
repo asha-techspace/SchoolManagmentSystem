@@ -12,24 +12,18 @@ dotenv.config();
 const app = new express();
 
 app.use(express.json());
-app.use(cors());
+// app.use(cors());
+
+app.use(
+    cors({
+      origin: "http://localhost:5173",
+      methods: ["GET", "POST","PUT","DELETE","PATCH"],
+      credentials: true,
+    })
+  );
 
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
 app.use(cookieParser());
-
-// Configure session middleware
-app.use(
-    session({
-      secret: process.env.SESSION_SECRET, // replace with your secret key
-      resave: false, // don't save session if unmodified
-      saveUninitialized: true, // save uninitialized sessions
-      cookie: { 
-        secure: false, // set to true if using HTTPS
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 1 day
-       }, 
-    })
-  );
 
 //Routes
 app.use('/api/auth', authRoutes);

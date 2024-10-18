@@ -18,7 +18,7 @@ const libraryHistorySchema = new mongoose.Schema({
 })
 
 const studentSchema = new mongoose.Schema({
-  studentId: {type:String, unique: true},
+  studentId: {type:String, unique: true, required: true},
   name : {type:String, required: true},
   dob : {type:Date, required:true},
   gender : {type:String, enum: ['male','female','other'], required: true},
