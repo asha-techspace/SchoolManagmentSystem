@@ -1,27 +1,27 @@
 import React from 'react';
-import SideBar from '../../Components/AdminDashBoardComponents/SideBar';
 import HeadSection from '../../Components/AdminDashBoardComponents/HeadSection';
 import StatsCards from '../../Components/AdminDashBoardComponents/StatsCards';
-import AttendanceChart from '../../Components/AdminDashBoardComponents/AttendanceChart';
-import NoticeBoard from '../../Components/AdminDashBoardComponents/NoticeBoard';
-import GenderChart from '../../Components/AdminDashBoardComponents/GenderChart';
+import AdminChangePassword from '../../Components/AdminDashBoardComponents/AdminChangePassword';
+import UserChangePassword from '../../Components/AdminDashBoardComponents/UserChangePassword';
+import { useSelector } from 'react-redux';
 
 
 const AdminDashboard = () => {
+    const { userInfo } = useSelector((state) => state.auth);
     return (
         <div className="min-h-screen flex bg-gray-100">
-            <SideBar />
             <div className="flex-1">
                 <HeadSection />
                 <div className="p-6 grid grid-cols-1  gap-6">
                     <StatsCards />
-                    
-                </div>
-                <div className="p-6 grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                    <GenderChart />
-                    <AttendanceChart />
-                    <NoticeBoard />
-                    
+                    <div className='flex-1'>
+                        <div className='grid grid-cols-1 gap-6 sm:grid-cols-1 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-4 '>
+                            {(userInfo.role.toLowerCase() === 'admin')?
+                            <AdminChangePassword />:null}
+                            <UserChangePassword />
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>

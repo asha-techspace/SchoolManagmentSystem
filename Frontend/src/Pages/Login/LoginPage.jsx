@@ -55,9 +55,11 @@ function LoginPage() {
           
           console.log(`User: ${user._doc.role}`);
 
-          (user._doc.role == 'Admin')?navigate('/adminDashboard'):
-          (user._doc.role == 'OfficeStaff')?navigate('/officeStaffDashboard'):
-          (user._doc.role == 'Librarian')?navigate('/librarianDashboard'):navigate('/');
+          // (user._doc.role == 'Admin')?navigate('/adminDashboard'):
+          // (user._doc.role == 'OfficeStaff')?navigate('/officeStaffDashboard'):
+          // (user._doc.role == 'Librarian')?navigate('/librarianDashboard'):navigate('/');
+
+          navigate('/adminDashboard')
           
         }
       } catch (err) {

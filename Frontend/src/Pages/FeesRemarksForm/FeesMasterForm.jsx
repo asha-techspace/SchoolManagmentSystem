@@ -6,12 +6,8 @@ const FeesRemarksCreateForm = () => {
   // Form data and error states
   const [formData, setFormData] = useState({
     studentId: "",
-    feeType: "",
-    paymentDate: "",
-    remarks: "",
-    date: new Date().toISOString().split("T")[0], // Default to current date
-    amountPaid: "",
-    totalFees: "",
+    feesType: "",
+    totalAmount: "",
     dueDate: "",
   });
 
@@ -30,30 +26,12 @@ const FeesRemarksCreateForm = () => {
       validationErrors.studentId = "Student ID is required";
     }
 
-    if (!formData.feeType) {
-      validationErrors.feeType = "Fee Type is required";
+    if (!formData.feesType) {
+      validationErrors.feesType = "Fee Type is required";
     }
 
-
-
-    if (!formData.paymentDate) {
-      validationErrors.paymentDate = "Payment Date is required";
-    }
-
-    if (!formData.remarks.trim()) {
-      validationErrors.remarks = "Remarks are required";
-    }
-
-    if (!formData.date) {
-      validationErrors.date = "Date is required";
-    }
-
-    if (!formData.amountPaid || isNaN(formData.amountPaid)) {
-      validationErrors.amountPaid = "Amount Paid must be a valid number";
-    }
-
-    if (formData.totalFees && isNaN(formData.totalFees)) {
-      validationErrors.totalFees = "Total Fees must be a valid number";
+    if (formData.totalAmount && isNaN(formData.totalAmount)) {
+      validationErrors.totalAmount = "Total Fees must be a valid number";
     }
 
     if (!formData.dueDate) {
@@ -65,12 +43,12 @@ const FeesRemarksCreateForm = () => {
 
   const addFeeRecord = async (record) => {
     try {
-      let id = record.student_id;
+      let id = record.studentId;
       let payload = record;
-      delete payload.student_id;
+      delete payload.studentId;
       console.log(`Payload:: ${JSON.stringify(payload)}`)
-      const response = await axios.post(`http://127.0.0.1:5000/api/students/fees-history/${id}`, payload,{ withCredentials:true });
-      console.log(`add Library response:: ${JSON.stringify(response)}`)
+      const response = await axios.post(`http://localhost:5000/api/students/${id}/addfees/`, payload,{ withCredentials:true });
+      console.log(`add fees response:: ${JSON.stringify(response)}`)
       const data = response.data.message;
     } catch (err) {
       console.log(err)
@@ -86,16 +64,12 @@ const FeesRemarksCreateForm = () => {
 
     if (Object.keys(validationErrors).length === 0) {
       console.log("Fees remarks data: ", formData);
-      alert("Form Submitted Successfully!");
+      addFeeRecord(formData);
+     alert("Fees Detail Submitted Successfully!");
       setFormData({
         studentId: "",
-        feeType: "",
-
-        paymentDate: "",
-        remarks: "",
-        date: new Date().toISOString().split("T")[0],
-        amountPaid: "",
-        totalFees: "",
+        feesType: "",
+        totalAmount: "",
         dueDate: "",
       }); // Reset form after successful submission
     }
@@ -125,10 +99,10 @@ const FeesRemarksCreateForm = () => {
           <div>
             <label className="block text-sm font-medium text-gray-700">Fee Type</label>
             <select
-              name="feeType"
-              value={formData.feeType}
+              name="feesType"
+              value={formData.feesType}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.feeType ? "border-red-500" : "border-gray-300"
+              className={`mt-1 block w-full p-2 border ${errors.feesType ? "border-red-500" : "border-gray-300"
                 } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             >
               <option value="">Select Fee Type</option>
@@ -138,68 +112,24 @@ const FeesRemarksCreateForm = () => {
               <option value="activities">Activities</option>
               <option value="miscellaneous">Miscellaneous</option>
             </select>
-            {errors.feeType && <p className="text-red-500 text-sm mt-1">{errors.feeType}</p>}
+            {errors.feesType && <p className="text-red-500 text-sm mt-1">{errors.feesType}</p>}
           </div>
 
 
-
-          {/* Payment Date */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Payment Date</label>
-            <input
-              type="date"
-              name="paymentDate"
-              value={formData.paymentDate}
-              onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.paymentDate ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-            />
-            {errors.paymentDate && <p className="text-red-500 text-sm mt-1">{errors.paymentDate}</p>}
-          </div>
-
-          {/* Date */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Date</label>
-            <input
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.date ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-            />
-            {errors.date && <p className="text-red-500 text-sm mt-1">{errors.date}</p>}
-          </div>
-
-          {/* Amount Paid */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Amount Paid</label>
-            <input
-              type="number"
-              name="amountPaid"
-              value={formData.amountPaid}
-              onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.amountPaid ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-            />
-            {errors.amountPaid && (
-              <p className="text-red-500 text-sm mt-1">{errors.amountPaid}</p>
-            )}
-          </div>
 
           {/* Total Fees */}
           <div>
             <label className="block text-sm font-medium text-gray-700">Total Fees</label>
             <input
               type="number"
-              name="totalFees"
-              value={formData.totalFees}
+              name="totalAmount"
+              value={formData.totalAmount}
               onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.totalFees ? "border-red-500" : "border-gray-300"
+              className={`mt-1 block w-full p-2 border ${errors.totalAmount ? "border-red-500" : "border-gray-300"
                 } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
             />
-            {errors.totalFees && (
-              <p className="text-red-500 text-sm mt-1">{errors.totalFees}</p>
+            {errors.totalAmount && (
+              <p className="text-red-500 text-sm mt-1">{errors.totalAmount}</p>
             )}
           </div>
 
@@ -217,26 +147,13 @@ const FeesRemarksCreateForm = () => {
             {errors.dueDate && <p className="text-red-500 text-sm mt-1">{errors.dueDate}</p>}
           </div>
 
-          {/* Remarks */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Remarks</label>
-            <textarea
-              name="remarks"
-              value={formData.remarks}
-              onChange={handleChange}
-              className={`mt-1 block w-full p-2 border ${errors.remarks ? "border-red-500" : "border-gray-300"
-                } rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500`}
-            />
-            {errors.remarks && <p className="text-red-500 text-sm mt-1">{errors.remarks}</p>}
-          </div>
-
           {/* Submit Button */}
           <div className="text-center">
             <button
               type="submit"
               className="bg-[#0a4275] text-white px-6 py-2 rounded-lg shadow-md hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500"
             >
-              Submit Fees Remarks
+              Submit
             </button>
           </div>
         </form>

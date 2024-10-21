@@ -2,6 +2,7 @@ import User from '../../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import {generateToken} from '../../utils/generateToken.js';
 import Counter from '../../models/counter.model.js';
+import Student from '../../models/student.model.js';
 
 export const addUser = async (req, res) => {
     try {
@@ -89,3 +90,56 @@ export const deleteUser = async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   };
+
+  export const updatePassword = async (req, res) => {
+    try {
+      // Get the fields to update from the request body
+      const params = req.body;
+      console.log("params",params)
+  
+      // Find the user by ID and update with new fields, and return the updated user
+      const user = await User.findOne({ id: params.id });
+      // If user not found, return a 404 error
+      if (!user) {
+        return res.status(404).json({ message: 'User not found..' });
+      }
+
+      user.password = params.password;
+      console.log("new password",user.password)
+      user.save();
+  
+      // Return the updated user in the response
+      res.status(200).json({ success: true, data: user });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({ message: error.message });
+    }
+  };
+  
+
+  export const getTotalStudentsAndStaff = async (req, res) => {
+    try {
+      // Count the total number of students
+      const studentCount = await Student.countDocuments();
+  
+      // Count the total number of staff (users with a staff role)
+      const staffCount = await User.countDocuments({ role: { $in: ['Admin', 'OfficeStaff', 'Librarian'] } });
+  
+      // Return the total count
+      res.status(200).json({
+        success: true,
+        data: {
+          totalStudents: studentCount,
+          totalStaff: staffCount,
+          total: studentCount + staffCount,
+        },
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'An error occurred while counting students and staff',
+        error: error.message,
+      });
+    }
+  };
+  

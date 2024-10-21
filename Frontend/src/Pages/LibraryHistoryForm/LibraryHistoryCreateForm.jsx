@@ -62,7 +62,7 @@ const LibraryHistoryForm = () => {
       let payload = record;
       delete payload.student_id;
       console.log(`Payload:: ${JSON.stringify(payload)}`)
-      const response = await axios.post(`http://127.0.0.1:5000/api/students/library/${id}`, payload,{ withCredentials:true });
+      const response = await axios.post(`http://localhost:5000/api/students/library/${id}`, payload,{ withCredentials: true });
       console.log(`add Library response:: ${JSON.stringify(response)}`)
       const data = response.data.message;
     } catch (err) {
@@ -81,7 +81,7 @@ const LibraryHistoryForm = () => {
     if (Object.keys(validationErrors).length === 0) {
       console.log("Library history data: ", formData);
       addLibRecord(formData);
-      // alert("Form Submitted Successfully!");
+      alert("Library entry Successful!");
       setFormData({
         student_id: "",
         bookId: "",

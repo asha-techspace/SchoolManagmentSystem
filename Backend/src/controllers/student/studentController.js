@@ -324,3 +324,53 @@ export const updateFeesSection = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const addFees = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+    console.log("Fees Payload: ",req.body);
+    const updatedFees = req.body;
+
+    const student = await Student.findOne({ studentId: studentId });
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    const feeIndex = student.fees.findIndex(fee => fee.feesType === updatedFees.feesType);
+
+    if (feeIndex !== -1) {
+      // If the entry exists, replace it with the updatedFees object
+      student.fees[feeIndex] = updatedFees;
+    } else {
+      // If it doesn't exist, append the updatedFees to the fees array
+      student.fees.push(updatedFees);
+    }
+
+    await student.save();
+    
+    res.status(200).json({ message: 'Fees updated successfully', student });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteFees = async (req, res) => {
+  try {
+    const { studentId, transId } = req.params;
+    
+    const student = await Student.findOneAndUpdate(
+      { studentId: studentId },
+      { $pull: { fees: { _id: transId } } },
+      { new: true }
+    );
+
+    if (!student) {
+      return res.status(404).json({ message: 'Student or fees entry not found' });
+    }
+
+    res.status(200).json({ message: `Fees transaction deleted successfully - ${studentId}, ${transId}` });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
